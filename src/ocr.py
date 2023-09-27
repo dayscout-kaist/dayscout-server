@@ -39,6 +39,7 @@ def clova_ocr(client_id, client_secret, file_contents):
 
     per_unit = re.search(r"총 ?내용량 ?당", text)
     per_unit = "총내용량당" if per_unit else None
+    print(text)
 
     # 단위 파싱
     if per_unit == None:
@@ -47,6 +48,9 @@ def clova_ocr(client_id, client_secret, file_contents):
     if per_unit == None:
         per_unit = re.search(r"내용량 ?당", text)
         per_unit = "총내용량당" if per_unit else None
+    if per_unit == None:
+        per_unit = re.search(r"\d+(\.\d+)?g[ )]?당", text)
+        per_unit = per_unit.group(0) if per_unit else None
 
     # unit = re.search(r'(g|량)?당', text)
     # unit = unit.group(1) + "g" if unit else None

@@ -1,7 +1,14 @@
+import importlib.util
+
 from fastapi import Body, FastAPI, File, UploadFile
 
-import client
-import ocr
+spec = importlib.util.spec_from_file_location("client", "src/client.py")
+client = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(client)
+
+spec = importlib.util.spec_from_file_location("ocr", "src/ocr.py")
+ocr = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(ocr)
 
 app = FastAPI()
 
