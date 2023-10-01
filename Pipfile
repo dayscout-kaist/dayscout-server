@@ -8,6 +8,7 @@ fastapi = {version="==0.103.2"}
 uvicorn = {version="==0.23.2"}
 python-multipart = {version="==0.0.6"}
 requests = "==2.31.0"
+python-dotenv = "==1.0.0"
 
 [dev-packages]
 black = "*"
