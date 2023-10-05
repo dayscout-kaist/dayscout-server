@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, UploadFile
 
-from src.docs import TextBody, TextResponse
+from src.docs import FoodContent, FoodInfo, TextBody
 from src.nutrition_search import search_nutrition
 
 # from src.barcode_search import barcode_search
@@ -12,10 +12,9 @@ app = FastAPI()
 
 
 @app.post("/text")
-async def search_from_text(body: TextBody) -> TextResponse:
+async def search_from_text(body: TextBody) -> list[FoodInfo]:
     try:
-        results = search_nutrition(body.text)
-        return {"nutritions": results}
+        return search_nutrition(body.text)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal Server Error")
@@ -32,11 +31,10 @@ async def search_from_text(body: TextBody) -> TextResponse:
 
 
 @app.post("/nutrition-facts-image")
-async def search_from_nf_image(file: UploadFile):
+async def search_from_nf_image(file: UploadFile):  # -> FoodContent: @todo @fixme
     try:
         file_contents = await file.read()
-        nut_info = clova_ocr(file_contents)
-        return {"nutrition": nut_info}
+        return clova_ocr(file_contents)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal Server Error")

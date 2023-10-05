@@ -56,9 +56,9 @@ def clova_ocr(file_contents):
     # unit = re.search(r'(g|량)?당', text)
     # unit = unit.group(1) + "g" if unit else None
 
-    # 나트륨 파싱
-    sodium = re.search(r"나트륨([\d\.,]+)mg", text)
-    sodium = sodium.group(1) + "mg" if sodium else None
+    # # 나트륨 파싱
+    # sodium = re.search(r"나트륨([\d\.,]+)mg", text)
+    # sodium = sodium.group(1) + "mg" if sodium else None
 
     # 탄수화물 파싱
     carb = re.search(r"탄수화물([\d\.,]+)g", text)
@@ -72,36 +72,42 @@ def clova_ocr(file_contents):
     fat = re.search(r"지방([\d\.,]+)g", text)
     fat = fat.group(1) + "g" if fat else None
 
-    # 트랜스지방 파싱
-    trans_fat = re.search(r"트랜스지방([\d\.,]+)g", text)
-    trans_fat = trans_fat.group(1) + "g" if trans_fat else None
+    # # 트랜스지방 파싱
+    # trans_fat = re.search(r"트랜스지방([\d\.,]+)g", text)
+    # trans_fat = trans_fat.group(1) + "g" if trans_fat else None
 
-    # 포화지방 파싱
-    sat_fat = re.search(r"포화지방([\d\.,]+)g", text)
-    sat_fat = sat_fat.group(1) + "g" if sat_fat else None
+    # # 포화지방 파싱
+    # sat_fat = re.search(r"포화지방([\d\.,]+)g", text)
+    # sat_fat = sat_fat.group(1) + "g" if sat_fat else None
 
-    # 콜레스테롤 파싱
-    cholesterol = re.search(r"콜레스테롤([\d\.,]+)mg", text)
-    cholesterol = cholesterol.group(1) + "mg" if cholesterol else None
+    # # 콜레스테롤 파싱
+    # cholesterol = re.search(r"콜레스테롤([\d\.,]+)mg", text)
+    # cholesterol = cholesterol.group(1) + "mg" if cholesterol else None
 
     # 단백질 파싱
     protein = re.search(r"단백질([\d\.,]+)g", text)
     protein = protein.group(1) + "g" if protein else None
 
-    # 칼슘 파싱
-    calcium = re.search(r"칼슘([\d\.,]+)mg", text)
-    calcium = calcium.group(1) + "mg" if calcium else None
+    # # 칼슘 파싱
+    # calcium = re.search(r"칼슘([\d\.,]+)mg", text)
+    # calcium = calcium.group(1) + "mg" if calcium else None
 
     return {
-        "총내용량": total_content,
-        "단위": per_unit,
-        "나트륨": sodium,
-        "탄수화물": carb,
-        "당류": sugar,
-        "지방": fat,
-        "트랜스지방": trans_fat,
-        "포화지방": sat_fat,
-        "콜레스테롤": cholesterol,
-        "단백질": protein,
-        "칼슘": calcium,
+        "totalWeight": total_content,
+        "unit": {
+            "type": "total",
+            "totalWeight": per_unit,
+        },
+        "primaryUnit": "g",
+        "nutrients": {
+            "fat": fat,
+            "carbohydrate": carb,
+            "sugar": sugar,
+            "protein": protein,
+            # "트랜스지방": trans_fat,
+            # "포화지방": sat_fat,
+            # "콜레스테롤": cholesterol,
+            # "칼슘": calcium,
+            # "나트륨": sodium,
+        },
     }
