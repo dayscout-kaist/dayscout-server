@@ -1,2 +1,3 @@
 .DS_STORE
-src/client.py
+__pycache__
+.env
