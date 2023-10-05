@@ -5,7 +5,6 @@ import requests
 ES_URL = (
     os.environ["ES_URL"] if "ES_URL" in os.environ else "http://bap.sparcs.org:31007"
 )
-ES_URL = os.environ["ES_URL"] if "ES_URL" in os.environ else "http://localhost:9200"
 ES_INDEX = "nutrient_ver_01"
 
 
