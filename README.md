@@ -23,7 +23,7 @@ pre-commit install --hook-type commit-msg
 ## How to Run
 
 ```bash
-uvicorn src.main:app --reload
+pipenv run dev
 ```
 
 ## How to Contribute
