@@ -28,11 +28,11 @@ def clova_ocr(file_contents):
         text += field["inferText"]
 
     # 총 내용량 파싱
-    total_content = re.search(r"총내용량 ?([\d\.]+) ?g", text)
+    total_content = re.search(r"총내용량 ?([\d.]+) ?g", text)
     # total_content = re.search(r'총내용량([\d\.]+g(?:\([\d\.]+gX\d+봉지\))?)', text)
     total_content = total_content.group(1) + "g" if total_content else None
     if total_content == None:
-        total_content = re.search(r"내용량 ?([\d\.]+) ?g", text)
+        total_content = re.search(r"내용량 ?([\d.]+) ?g", text)
         total_content = total_content.group(1) + "g" if total_content else None
 
     per_unit = re.search(r"총 ?내용량 ?당", text)
@@ -57,15 +57,15 @@ def clova_ocr(file_contents):
     # sodium = sodium.group(1) + "mg" if sodium else None
 
     # 탄수화물 파싱
-    carb = re.search(r"탄수화물([\d\.,]+)g", text)
+    carb = re.search(r"탄수화물([\d.,]+)g", text)
     carb = carb.group(1) + "g" if carb else None
 
     # 당류 파싱
-    sugar = re.search(r"당류([\d\.,]+)g", text)
+    sugar = re.search(r"당류([\d.,]+)g", text)
     sugar = sugar.group(1) + "g" if sugar else None
 
     # 지방 파싱
-    fat = re.search(r"지방([\d\.,]+)g", text)
+    fat = re.search(r"지방([\d.,]+)g", text)
     fat = fat.group(1) + "g" if fat else None
 
     # # 트랜스지방 파싱
@@ -81,7 +81,7 @@ def clova_ocr(file_contents):
     # cholesterol = cholesterol.group(1) + "mg" if cholesterol else None
 
     # 단백질 파싱
-    protein = re.search(r"단백질([\d\.,]+)g", text)
+    protein = re.search(r"단백질([\d.,]+)g", text)
     protein = protein.group(1) + "g" if protein else None
 
     # # 칼슘 파싱
