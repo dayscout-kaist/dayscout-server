@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, UploadFile
 
 from src.docs import FoodContent, FoodInfo, TextBody
@@ -7,7 +6,6 @@ from src.nutrition_search import search_nutrition
 # from src.barcode_search import barcode_search
 from src.ocr import clova_ocr
 
-load_dotenv()
 app = FastAPI()
 
 
