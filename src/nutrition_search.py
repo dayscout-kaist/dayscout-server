@@ -1,16 +1,13 @@
-import os
-
 import requests
 
-ES_URL = (
-    os.environ["ES_URL"] if "ES_URL" in os.environ else "http://bap.sparcs.org:31007"
-)
-ES_INDEX = "nutrient_ver_02"
+from src.settings import settings
 
 
 def search_nutrition(text: str):
     query = {"query": {"match": {"text_for_search": text}}}
-    response = requests.post(ES_URL + "/" + ES_INDEX + "/_search", json=query)
+    response = requests.post(
+        settings.ES_URL + "/" + settings.ES_INDEX + "/_search", json=query
+    )
     result = response.json()
     return list(
         map(

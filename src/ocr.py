@@ -1,15 +1,11 @@
 import json
-import os
 import re
 import time
 import uuid
 
 import requests
 
-CLOVA_CLIENT_SECRET = (
-    os.environ["CLOVA_CLIENT_SECRET"] if "CLOVA_CLIENT_SECRET" in os.environ else None
-)
-CLOVA_API_URL = "https://5xcfpcnwfi.apigw.ntruss.com/custom/v1/25058/038a80468ee57106c9c2c789de5ad7a69b576c0bef74fa695e4dc7db1767d967/general"
+from src.settings import settings
 
 
 def clova_ocr(file_contents):
@@ -22,9 +18,9 @@ def clova_ocr(file_contents):
 
     payload = {"message": json.dumps(request_json).encode("UTF-8")}
     files = [("file", file_contents)]
-    headers = {"X-OCR-SECRET": CLOVA_CLIENT_SECRET}
+    headers = {"X-OCR-SECRET": settings.CLOVA_CLIENT_SECRET}
     response = requests.request(
-        "POST", CLOVA_API_URL, headers=headers, data=payload, files=files
+        "POST", settings.CLOVA_API_URL, headers=headers, data=payload, files=files
     )
     result = response.json()
     text = ""
