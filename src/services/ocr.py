@@ -3,7 +3,7 @@ import re
 import time
 import uuid
 
-import requests
+import httpx
 
 from src.schemas import AbsoluteUnit, FoodContent, Nutrients, SingleUnit, TotalUnit
 from src.settings import settings
@@ -17,13 +17,15 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContent:
         "timestamp": int(time.time() * 1000),
     }
 
-    result = requests.request(
-        method="POST",
-        url=settings.CLOVA_API_URL,
-        headers={"X-OCR-SECRET": settings.CLOVA_CLIENT_SECRET},
-        data={"message": json.dumps(request_json).encode("UTF-8")},
-        files=[("file", image)],
-    ).json()
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            settings.CLOVA_API_URL,
+            headers={"X-OCR-SECRET": settings.CLOVA_CLIENT_SECRET},
+            data={"message": json.dumps(request_json).encode("UTF-8")},
+            files=[("file", image)],
+        )
+
+        result = response.json()
 
     text = "".join([field["inferText"] for field in result["images"][0]["fields"]])
 
