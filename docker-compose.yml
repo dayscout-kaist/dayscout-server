@@ -9,7 +9,7 @@ services:
     environment:
       - ES_URL=http://elasticsearch:9200
       - ES_INDEX=${ES_INDEX}
-      - CLOVA_API_URL=${CLOVA_API_URL}
+      # - CLOVA_API_URL=${CLOVA_API_URL}
       - CLOVA_CLIENT_SECRET=${CLOVA_CLIENT_SECRET?}
     networks:
       - server
