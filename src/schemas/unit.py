@@ -18,7 +18,6 @@ class TotalUnit(BaseModel):
     """
 
     type: Literal["total"] = "total"
-    totalWeight: float
 
 
 class SingleUnit(BaseModel):
