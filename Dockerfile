@@ -2,12 +2,15 @@ FROM python:3.11
 
 # Copy repo
 WORKDIR /code
-COPY . .
+
+COPY Pipfile Pipfile.lock ./
 
 # Install python dependencies
 RUN pip install pipenv \
     && pipenv --python 3.11 \
     && pipenv install --dev --system --deploy
+
+COPY src/ ./src
 
 # Run container
 EXPOSE 80

@@ -5,3 +5,6 @@ __pycache__
 # IDE Files
 .idea
 .vscode
+
+# Docker data volume
+data/

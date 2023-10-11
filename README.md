@@ -41,3 +41,17 @@ pipenv run dev
 [pep-484]: https://peps.python.org/pep-0484/
 [repo/black]: https://github.com/psf/black
 [repo/pre-commit]: https://github.com/pre-commit/pre-commit
+
+## Deployment
+
+Copy and fill in the `.env` file.
+
+```bash
+cp .env.prod.example .env
+```
+
+Run the server.
+
+```bash
+docker-compose up -d --build
+```
