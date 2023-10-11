@@ -1,11 +1,11 @@
 from typing import Optional, Union
 
-from pydantic import BaseModel
+from src.utils.response import CamelModel
 
 from .unit import AbsoluteUnit, PrimaryUnit, SingleUnit, TotalUnit
 
 
-class Nutrients(BaseModel):
+class Nutrients(CamelModel):
     carbohydrate: Optional[float] = None
     protein: Optional[float] = None
     fat: Optional[float] = None
@@ -13,14 +13,14 @@ class Nutrients(BaseModel):
     energy: Optional[float] = None
 
 
-class FoodContent(BaseModel):
-    totalWeight: float
+class FoodContent(CamelModel):
+    total_weight: float
     unit: Union[AbsoluteUnit, TotalUnit, SingleUnit]
-    primaryUnit: PrimaryUnit
+    primary_unit: PrimaryUnit
     nutrients: Nutrients
 
 
-class FoodInfo(BaseModel):
+class FoodInfo(CamelModel):
     name: str
     category: str
     manufacturer: Optional[str] = None

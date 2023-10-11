@@ -89,9 +89,9 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContent:
     # calcium = calcium.group(1) + "mg" if calcium else None
 
     return FoodContent(
-        totalWeight=total_content,
+        total_weight=total_content,
         unit=per_unit,
-        primaryUnit="g",
+        primary_unit="g",
         nutrients=Nutrients(
             carb=carb,
             sugar=sugar,

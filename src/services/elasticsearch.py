@@ -16,9 +16,9 @@ def aggregate_nutrition(food_item: dict) -> FoodInfo:
     )
 
     food_content = FoodContent(
-        totalWeight=food_item["nutrient_reference_weight"],
+        total_weight=food_item["nutrient_reference_weight"],
         unit=AbsoluteUnit(),
-        primaryUnit=PrimaryUnit[food_item["weight_unit"]],
+        primary_unit=PrimaryUnit[food_item["weight_unit"]],
         nutrients=nutrients,
     )
 
