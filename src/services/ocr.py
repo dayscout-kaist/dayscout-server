@@ -5,27 +5,27 @@ import uuid
 
 import requests
 
+from src.schemas import AbsoluteUnit, FoodContent, Nutrients, SingleUnit, TotalUnit
 from src.settings import settings
 
 
-def clova_ocr(file_contents):
+async def parse_nutrients_from_image(image: bytes) -> FoodContent:
     request_json = {
         "images": [{"format": "jpeg", "name": "good_1"}],
         "requestId": str(uuid.uuid4()),
         "version": "V2",
-        "timestamp": int(round(time.time() * 1000)),
+        "timestamp": int(time.time() * 1000),
     }
 
-    payload = {"message": json.dumps(request_json).encode("UTF-8")}
-    files = [("file", file_contents)]
-    headers = {"X-OCR-SECRET": settings.CLOVA_CLIENT_SECRET}
-    response = requests.request(
-        "POST", settings.CLOVA_API_URL, headers=headers, data=payload, files=files
-    )
-    result = response.json()
-    text = ""
-    for field in result["images"][0]["fields"]:
-        text += field["inferText"]
+    result = requests.request(
+        method="POST",
+        url=settings.CLOVA_API_URL,
+        headers={"X-OCR-SECRET": settings.CLOVA_CLIENT_SECRET},
+        data={"message": json.dumps(request_json).encode("UTF-8")},
+        files=[("file", image)],
+    ).json()
+
+    text = "".join([field["inferText"] for field in result["images"][0]["fields"]])
 
     # 총 내용량 파싱
     total_content = re.search(r"총내용량 ?([\d.]+) ?g", text)
@@ -35,17 +35,17 @@ def clova_ocr(file_contents):
         total_content = re.search(r"내용량 ?([\d.]+) ?g", text)
         total_content = total_content.group(1) + "g" if total_content else None
 
-    per_unit = re.search(r"총 ?내용량 ?당", text)
-    per_unit = "총내용량당" if per_unit else None
-
     # 단위 파싱
-    if per_unit == None:
+    per_unit = re.search(r"총 ?내용량 ?당", text)
+    per_unit = TotalUnit() if per_unit else None
+
+    if per_unit is None:
         per_unit = re.search(r"(100 ?g) ?당", text)
-        per_unit = per_unit.group(1) + "당" if per_unit else None
-    if per_unit == None:
+        per_unit = AbsoluteUnit() if per_unit else None
+    if per_unit is None:
         per_unit = re.search(r"내용량 ?당", text)
-        per_unit = "총내용량당" if per_unit else None
-    if per_unit == None:
+        per_unit = TotalUnit() if per_unit else None
+    if per_unit is None:
         per_unit = re.search(r"\d+(\.\d+)?g[ )]?당", text)
         per_unit = per_unit.group(0) if per_unit else None
 
@@ -88,22 +88,14 @@ def clova_ocr(file_contents):
     # calcium = re.search(r"칼슘([\d\.,]+)mg", text)
     # calcium = calcium.group(1) + "mg" if calcium else None
 
-    return {
-        "totalWeight": total_content,
-        "unit": {
-            "type": "total",
-            "totalWeight": per_unit,
-        },
-        "primaryUnit": "g",
-        "nutrients": {
-            "fat": fat,
-            "carbohydrate": carb,
-            "sugar": sugar,
-            "protein": protein,
-            # "트랜스지방": trans_fat,
-            # "포화지방": sat_fat,
-            # "콜레스테롤": cholesterol,
-            # "칼슘": calcium,
-            # "나트륨": sodium,
-        },
-    }
+    return FoodContent(
+        totalWeight=total_content,
+        unit=per_unit,
+        primaryUnit="g",
+        nutrients=Nutrients(
+            carb=carb,
+            sugar=sugar,
+            fat=fat,
+            protein=protein,
+        ),
+    )
