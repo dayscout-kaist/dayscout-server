@@ -37,6 +37,8 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContentOptional:
         [field["inferText"] for field in result["images"][0]["fields"]]
     ).replace(" ", "")
 
+    print(text)
+
     # 총 내용량 파싱
     total_content = re.search(r"총내용량 ?([\d.]+) ?g", text)
     # total_content = re.search(r'총내용량([\d\.]+g(?:\([\d\.]+gX\d+봉지\))?)', text)
@@ -67,8 +69,8 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContentOptional:
     # sodium = sodium.group(1) + "mg" if sodium else None
 
     # 탄수화물 파싱
-    carb = re.search(r"탄수화물([\d.,]+)g", text)
-    carb = float(carb.group(1)) if carb else None
+    carbohydrate = re.search(r"탄수화물([\d.,]+)g", text)
+    carbohydrate = float(carbohydrate.group(1)) if carbohydrate else None
 
     # 당류 파싱
     sugar = re.search(r"당류([\d.,]+)g", text)
@@ -103,7 +105,7 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContentOptional:
         unit=per_unit,
         primary_unit="g",
         nutrients=Nutrients(
-            carb=carb,
+            carbohydrate=carbohydrate,
             sugar=sugar,
             fat=fat,
             protein=protein,
