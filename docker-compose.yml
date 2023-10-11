@@ -34,7 +34,7 @@ services:
       - "${ES_PORT?}:9200"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      ELASTIC_PASSWORD: password
+      ELASTIC_PASSWORD: ${ES_PASSWORD?}
       # Use single node discovery in order to disable production mode and avoid bootstrap checks
       # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
