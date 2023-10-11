@@ -5,11 +5,17 @@ import uuid
 
 import httpx
 
-from src.schemas import AbsoluteUnit, FoodContent, Nutrients, SingleUnit, TotalUnit
+from src.schemas import (
+    AbsoluteUnit,
+    FoodContentOptional,
+    Nutrients,
+    SingleUnit,
+    TotalUnit,
+)
 from src.settings import settings
 
 
-async def parse_nutrients_from_image(image: bytes) -> FoodContent:
+async def parse_nutrients_from_image(image: bytes) -> FoodContentOptional:
     request_json = {
         "images": [{"format": "jpeg", "name": "good_1"}],
         "requestId": str(uuid.uuid4()),
@@ -32,10 +38,10 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContent:
     # 총 내용량 파싱
     total_content = re.search(r"총내용량 ?([\d.]+) ?g", text)
     # total_content = re.search(r'총내용량([\d\.]+g(?:\([\d\.]+gX\d+봉지\))?)', text)
-    total_content = total_content.group(1) + "g" if total_content else None
-    if total_content == None:
+    total_content = int(total_content.group(1)) if total_content else None
+    if total_content is None:
         total_content = re.search(r"내용량 ?([\d.]+) ?g", text)
-        total_content = total_content.group(1) + "g" if total_content else None
+        total_content = int(total_content.group(1)) if total_content else None
 
     # 단위 파싱
     per_unit = re.search(r"총 ?내용량 ?당", text)
@@ -60,15 +66,15 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContent:
 
     # 탄수화물 파싱
     carb = re.search(r"탄수화물([\d.,]+)g", text)
-    carb = carb.group(1) + "g" if carb else None
+    carb = int(carb.group(1)) if carb else None
 
     # 당류 파싱
     sugar = re.search(r"당류([\d.,]+)g", text)
-    sugar = sugar.group(1) + "g" if sugar else None
+    sugar = int(sugar.group(1)) if sugar else None
 
     # 지방 파싱
     fat = re.search(r"지방([\d.,]+)g", text)
-    fat = fat.group(1) + "g" if fat else None
+    fat = int(fat.group(1)) if fat else None
 
     # # 트랜스지방 파싱
     # trans_fat = re.search(r"트랜스지방([\d\.,]+)g", text)
@@ -84,13 +90,13 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContent:
 
     # 단백질 파싱
     protein = re.search(r"단백질([\d.,]+)g", text)
-    protein = protein.group(1) + "g" if protein else None
+    protein = int(protein.group(1)) if protein else None
 
     # # 칼슘 파싱
     # calcium = re.search(r"칼슘([\d\.,]+)mg", text)
     # calcium = calcium.group(1) + "mg" if calcium else None
 
-    return FoodContent(
+    return FoodContentOptional(
         total_weight=total_content,
         unit=per_unit,
         primary_unit="g",

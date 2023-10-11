@@ -20,6 +20,12 @@ class FoodContent(CamelModel):
     nutrients: Nutrients
 
 
+class FoodContentOptional(FoodContent):
+    total_weight: Optional[float]
+    unit: Optional[Union[AbsoluteUnit, TotalUnit, SingleUnit]]
+    primary_unit: Optional[PrimaryUnit]
+
+
 class FoodInfo(CamelModel):
     name: str
     category: str
