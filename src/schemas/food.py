@@ -31,3 +31,7 @@ class FoodInfo(CamelModel):
     category: str
     manufacturer: Optional[str] = None
     content: FoodContent
+
+
+class FoodName(CamelModel):
+    name: str

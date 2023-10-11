@@ -1,7 +1,11 @@
 from fastapi import APIRouter, UploadFile
 
-from src.schemas import FoodContentOptional, FoodInfo
-from src.services import parse_nutrients_from_image, search_food_by_text
+from src.schemas import FoodContentOptional, FoodInfo, FoodName
+from src.services import (
+    get_product_name_from_barcode,
+    parse_nutrients_from_image,
+    search_food_by_text,
+)
 
 router = APIRouter()
 
@@ -12,8 +16,10 @@ async def search_by_text(query: str) -> list[FoodInfo]:
 
 
 @router.get("/search/barcode")
-async def search_by_barcode(code: str) -> list[FoodInfo]:
-    return []  # TODO
+async def search_by_barcode(code: int) -> FoodName:
+    food_name = await get_product_name_from_barcode(code)
+
+    return FoodName(name=food_name)
 
 
 @router.post("/ocr")
