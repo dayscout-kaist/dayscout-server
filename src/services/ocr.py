@@ -33,7 +33,9 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContentOptional:
 
         result = response.json()
 
-    text = "".join([field["inferText"] for field in result["images"][0]["fields"]])
+    text = "".join(
+        [field["inferText"] for field in result["images"][0]["fields"]]
+    ).replace(" ", "")
 
     # 총 내용량 파싱
     total_content = re.search(r"총내용량 ?([\d.]+) ?g", text)
