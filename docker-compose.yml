@@ -46,8 +46,6 @@ services:
     container_name: dayscout-kibana
     build:
       context: kibana/
-      args:
-        ELK_VERSION: 7.10.0
     volumes:
       - type: bind
         source: ./kibana/config/kibana.yml
