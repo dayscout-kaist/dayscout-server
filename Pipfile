@@ -10,8 +10,10 @@ dev = "uvicorn src.main:app --reload"
 fastapi = {version="==0.103.2"}
 uvicorn = {version="==0.23.2"}
 python-multipart = {version="==0.0.6"}
-requests = "==2.31.0"
-python-dotenv = "==1.0.0"
+pydantic-settings = "==2.0.3"
+elasticsearch = {extras = ["async"], version = "==7.10.1"}
+httpx = "*"
+pyhumps = "*"
 
 [dev-packages]
 black = "*"
