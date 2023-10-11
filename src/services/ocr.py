@@ -53,9 +53,9 @@ async def parse_nutrients_from_image(image: bytes) -> FoodContentOptional:
     if per_unit is None:
         per_unit = re.search(r"내용량 ?당", text)
         per_unit = TotalUnit() if per_unit else None
-    if per_unit is None:
-        per_unit = re.search(r"\d+(\.\d+)?g[ )]?당", text)
-        per_unit = per_unit.group(0) if per_unit else None
+    # if per_unit is None:
+    #     per_unit = re.search(r"\d+(\.\d+)?g[ )]?당", text)
+    #     per_unit = per_unit.group(0) if per_unit else None
 
     # unit = re.search(r'(g|량)?당', text)
     # unit = unit.group(1) + "g" if unit else None
