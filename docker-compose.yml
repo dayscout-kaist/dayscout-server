@@ -20,8 +20,6 @@ services:
     container_name: dayscout-elasticsearch
     build:
       context: elasticsearch/
-      args:
-        ELK_VERSION: $ELK_VERSION
     volumes:
       - type: bind
         source: ./elasticsearch/config/elasticsearch.yml
