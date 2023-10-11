@@ -47,7 +47,7 @@ services:
     build:
       context: kibana/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: 7.10.0
     volumes:
       - type: bind
         source: ./kibana/config/kibana.yml
