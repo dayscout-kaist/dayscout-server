@@ -3,9 +3,18 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[scripts]
+dev = "uvicorn src.main:app --reload"
+
 [packages]
-fastapi = "*"
-uvicorn = {extras = ["standard"], version = "*"}
+fastapi = {version="==0.103.2"}
+uvicorn = {version="==0.23.2"}
+python-multipart = {version="==0.0.6"}
+pydantic-settings = "==2.0.3"
+elasticsearch = {extras = ["async"], version = "==7.10.1"}
+httpx = "*"
+pyhumps = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 black = "*"
