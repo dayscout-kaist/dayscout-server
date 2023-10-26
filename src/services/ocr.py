@@ -3,31 +3,41 @@ import re
 import time
 import uuid
 
-import requests
+import httpx
+
+from src.schemas import (
+    AbsoluteUnit,
+    FoodContentOptional,
+    Nutrients,
+    SingleUnit,
+    TotalUnit,
+)
+from src.settings import settings
 
 
-def clova_ocr(client_id, client_secret, file_contents):
-    API_URL = "https://5xcfpcnwfi.apigw.ntruss.com/custom/v1/25058/038a80468ee57106c9c2c789de5ad7a69b576c0bef74fa695e4dc7db1767d967/general"
-
+async def parse_nutrients_from_image(image: bytes) -> FoodContentOptional:
     request_json = {
         "images": [{"format": "jpeg", "name": "good_1"}],
         "requestId": str(uuid.uuid4()),
         "version": "V2",
-        "timestamp": int(round(time.time() * 1000)),
+        "timestamp": int(time.time() * 1000),
     }
 
-    payload = {"message": json.dumps(request_json).encode("UTF-8")}
-    files = [("file", file_contents)]
-    headers = {"X-OCR-SECRET": client_secret}
-    response = requests.request(
-        "POST", API_URL, headers=headers, data=payload, files=files
-    )
-    result = response.json()
-    with open("result.json", "w", encoding="utf-8") as make_file:
-        json.dump(result, make_file, indent="\t", ensure_ascii=False)
-    text = ""
-    for field in result["images"][0]["fields"]:
-        text += field["inferText"]
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            settings.CLOVA_API_URL,
+            headers={"X-OCR-SECRET": settings.CLOVA_CLIENT_SECRET},
+            data={"message": json.dumps(request_json).encode("UTF-8")},
+            files=[("file", image)],
+        )
+
+        result = response.json()
+
+    text = "".join(
+        [field["inferText"] for field in result["images"][0]["fields"]]
+    ).replace(" ", "")
+
+    print(text)
 
     # 총 내용량 파싱
     total_content = re.search(r"총내용량 ?([\d\.]+) ?g", text)
@@ -60,8 +70,8 @@ def clova_ocr(client_id, client_secret, file_contents):
     sodium = sodium.group(1) + "mg" if sodium else None
 
     # 탄수화물 파싱
-    carb = re.search(r"탄수화물([\d\.,]+)g", text)
-    carb = carb.group(1) + "g" if carb else None
+    carbohydrate = re.search(r"탄수화물([\d\.,]+)g", text)
+    carbohydrate = carbohydrate.group(1) + "g" if carbohydrate else None
 
     # 당류 파싱
     sugar = re.search(r"당류([\d\.,]+)g", text)
@@ -91,19 +101,17 @@ def clova_ocr(client_id, client_secret, file_contents):
     calcium = re.search(r"칼슘([\d\.,]+)mg", text)
     calcium = calcium.group(1) + "mg" if calcium else None
     if total_content != None or carb != None:
-        return {
-            "총내용량": total_content,
-            "단위": per_unit,
-            "나트륨": sodium,
-            "탄수화물": carb,
-            "당류": sugar,
-            "지방": fat,
-            "트랜스지방": trans_fat,
-            "포화지방": sat_fat,
-            "콜레스테롤": cholesterol,
-            "단백질": protein,
-            "칼슘": calcium,
-        }
+        return FoodContentOptional(
+            total_weight=total_content,
+            unit=per_unit,
+            primary_unit="g",
+            nutrients=Nutrients(
+                carbohydrate=carbohydrate,
+                sugar=sugar,
+                fat=fat,
+                protein=protein,
+            ),
+        )
 
     # Eng version.
     # Total Content Parsing
@@ -138,8 +146,8 @@ def clova_ocr(client_id, client_secret, file_contents):
     sodium = sodium.group(1) + "mg" if sodium else None
 
     # Carbohydrate Parsing
-    carb = re.search(r"Carbohydrate([\d\.,]+)g", text)
-    carb = carb.group(1) + "g" if carb else None
+    carbohydrate = re.search(r"Carbohydrate([\d\.,]+)g", text)
+    carbohydrate = carbohydrate.group(1) + "g" if carb else None
 
     # Sugar Parsing
     sugar = re.search(r"Sugars([\d\.,]+)g", text)
@@ -179,19 +187,14 @@ def clova_ocr(client_id, client_secret, file_contents):
 
     # ... (Add more as needed)
 
-    return {
-        "총내용량": total_content,
-        "단위": per_unit,
-        "나트륨": sodium,
-        "탄수화물": carb,
-        "당류": sugar,
-        "지방": fat,
-        "트랜스지방": trans_fat,
-        "포화지방": sat_fat,
-        "콜레스테롤": cholesterol,
-        "단백질": protein,
-        "칼슘": calcium,
-    }
-
-
-__all__ = ["clova_ocr"]
+    return FoodContentOptional(
+        total_weight=total_content,
+        unit=per_unit,
+        primary_unit="g",
+        nutrients=Nutrients(
+            carbohydrate=carbohydrate,
+            sugar=sugar,
+            fat=fat,
+            protein=protein,
+        ),
+    )
