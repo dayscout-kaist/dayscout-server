@@ -13,14 +13,15 @@ python-multipart = {version="==0.0.6"}
 pydantic-settings = "==2.0.3"
 elasticsearch = {extras = ["async"], version = "==7.10.1"}
 httpx = "*"
-pyhumps = "*"
 sqlalchemy = "*"
+pyhumps = "3.7.1"
+humps = "*"
 
 [dev-packages]
 black = "*"
 isort = "*"
 pre-commit = "*"
 
-[requires]s
+[requires]
 python_version = "3.11"
 python_full_version = "3.11.3"
