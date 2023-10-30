@@ -1,11 +1,13 @@
 from fastapi import APIRouter
 
+from src.services import get_auth_info
+
 router = APIRouter()
 
 
 @router.get("/")
-async def search_by_text():
-    return {}
+async def info():
+    return get_auth_info()
 
 
 @router.post("/login")

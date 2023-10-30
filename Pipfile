@@ -7,8 +7,7 @@ name = "pypi"
 dev = "uvicorn src.main:app --reload"
 
 [packages]
-fastapi = {version="==0.103.2"}
-uvicorn = {version="==0.23.2"}
+fastapi = {extras = ["all"], version = "==0.99.1"}
 python-multipart = {version="==0.0.6"}
 elasticsearch = {extras = ["async"], version = "==7.10.1"}
 httpx = "*"
