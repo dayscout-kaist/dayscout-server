@@ -1,10 +1,10 @@
 from typing import Union
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from starlette.requests import Request
 
-from src.schemas import RegisterBody, UserInfoSession
-from src.services import register_user
+from src.schemas import LoginBody, RegisterBody, UserInfoSession
+from src.services import login_user, register_user
 
 router = APIRouter()
 
@@ -16,9 +16,10 @@ async def info(request: Request) -> Union[UserInfoSession, dict]:
 
 
 @router.post("/login")
-async def login(request: Request):
-    request.session["userInfo"] = None
-    return {}
+async def login(request: Request, body: LoginBody) -> bool:
+    if login_user(request, body):
+        return True
+    raise HTTPException(status_code=400, detail="Bad Request")
 
 
 @router.get("/logout")
@@ -34,4 +35,4 @@ async def logout(request: Request) -> bool:
 async def register(body: RegisterBody) -> bool:
     if register_user(body):
         return True
-    return False
+    raise HTTPException(status_code=409, detail="Conflict")

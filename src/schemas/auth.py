@@ -8,6 +8,11 @@ class UserInfoSession(CamelModel):
     username: UserInfo.__annotations__["username"]
 
 
+class LoginBody(CamelModel):
+    email: UserInfo.__annotations__["email"]
+    password: UserInfo.__annotations__["password"]
+
+
 class RegisterBody(CamelModel):
     email: UserInfo.__annotations__["email"]
     username: UserInfo.__annotations__["username"]
