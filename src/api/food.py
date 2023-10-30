@@ -18,7 +18,6 @@ async def search_by_text(query: str) -> list[FoodInfo]:
 @router.get("/search/barcode")
 async def search_by_barcode(code: int) -> FoodName:
     food_name = await get_product_name_from_barcode(code)
-
     return FoodName(name=food_name)
 
 

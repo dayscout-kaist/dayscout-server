@@ -1,7 +1,5 @@
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlmodel import SQLModel, create_engine
 
-from src.models import USERINFO
-from src.schemas import UserCreate
 from src.settings import settings
 
 from .userInfo import *
