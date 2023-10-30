@@ -24,9 +24,3 @@ def read_user(user_id: int):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
