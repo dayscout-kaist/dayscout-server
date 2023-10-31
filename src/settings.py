@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     HOST_NAME: str = "127.0.0.1"
     DB_NAME: str = "user_db"
+    SESSION_SECRET_KEY: str = "session_secret_key"
 
     class Config:
         env_file = ".env"

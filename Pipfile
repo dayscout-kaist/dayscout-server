@@ -7,15 +7,14 @@ name = "pypi"
 dev = "uvicorn src.main:app --reload"
 
 [packages]
-fastapi = {version="==0.103.2"}
-uvicorn = {version="==0.23.2"}
+fastapi = {extras = ["all"], version = "==0.99.1"}
 python-multipart = {version="==0.0.6"}
 elasticsearch = {extras = ["async"], version = "==7.10.1"}
 httpx = "*"
-pyhumps = "3.7.1"
-humps = "*"
 sqlmodel = "*"
-mysqlclient = "*"
+pyhumps = "==3.7.1"
+mysqlclient = "==2.2.0"
+bcrypt = "==4.0.1"
 
 [dev-packages]
 black = "*"
