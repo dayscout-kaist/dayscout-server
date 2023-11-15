@@ -1,5 +1,4 @@
 from elasticsearch import AsyncElasticsearch
-
 from src.schemas import AbsoluteUnit, FoodContent, FoodInfo, Nutrients, PrimaryUnit
 from src.settings import settings
 
