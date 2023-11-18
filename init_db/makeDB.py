@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 
 # 엑셀 파일 경로
-excel_path = "path_to_your_excel_file.xlsx"
+excel_path = "initialDB.xlsx"
 
 # 엑셀 파일 읽기
 df = pd.read_excel(excel_path)

@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 from starlette.requests import Request
 
-from src.models import Standard_food, general_food_engine
+from src.models import Standard_food, engine
 
 
 def create_food(food: Standard_food):
