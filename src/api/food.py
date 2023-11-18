@@ -13,24 +13,24 @@ router = APIRouter()
 
 
 @router.get("/search")
-async def searchByText(query: str) -> list[FoodInfo]:
+async def search_by_text(query: str) -> list[FoodInfo]:
     return await search_food_by_text(query)
 
 
 @router.get("/search/barcode")
-async def searchByBarcode(code: int) -> FoodName:
+async def search_by_barcode(code: int) -> FoodName:
     food_name = await get_product_name_from_barcode(code)
     return FoodName(name=food_name)
 
 
 @router.post("/ocr")
-async def searchByImage(file: UploadFile) -> FoodContentOptional:
+async def search_by_image(file: UploadFile) -> FoodContentOptional:
     image = await file.read()
     return await parse_nutrients_from_image(image)
 
 
 @router.post("/create")
-async def createFood(body: Standard_food) -> bool:
+async def create(body: Standard_food) -> bool:
     if create_food(body):
         return True
     raise HTTPException(status_code=409, detail="Conflict")
