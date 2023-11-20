@@ -23,12 +23,14 @@ class FoodContent(CamelModel):
     total_weight: float
     unit: Union[AbsoluteUnit, TotalUnit, SingleUnit]
     primary_unit: PrimaryUnit
-    nutrients: Nutrients
+    nutrients: Optional[Nutrients]
+    original_nutrients: Optional[Nutrients]
+    suggested_nutrients: Optional[Nutrients]
 
 
 class FoodInfo(CamelModel):
     name: str
-    category: str
+    # category: str
     manufacturer: Optional[str] = None
     content: FoodContent
 
@@ -40,14 +42,17 @@ class FoodContentOptional(FoodContent):
 
 
 class Food(CamelModel):
+    id: int
     name: str
-    represent_name: str
-    class_name: str
+    represent_name: Optional[str]
+    class_name: Optional[str]
     total_weight: str
     per_unit: PrimaryUnit
-    carbohydrate: Optional[float]
-    protein: Optional[float]
-    fat: Optional[float]
-    sugar: Optional[float]
-    energy: Optional[float]
+    manufacturer: Optional[str] = None
+    original_carbohydrate: Optional[float]
+    original_protein: Optional[float]
+    original_fat: Optional[float]
+    original_sugar: Optional[float]
+    original_energy: Optional[float]
     type: FoodType
+    # food_info: FoodInfo
