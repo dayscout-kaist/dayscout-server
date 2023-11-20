@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, Union
 
 from sqlmodel import Field, SQLModel
 
-from src.schemas.unit import FoodType, PrimaryUnit
+from src.schemas.food import Nutrients
+from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 
 class FoodInfo(SQLModel, table=True):
@@ -12,6 +13,8 @@ class FoodInfo(SQLModel, table=True):
     class_name: Optional[str] = Field(default=None)
     manufacturer: Optional[str] = Field(default=None)
     total_weight: float = Field(default=None)
+    unit: UnitEnum = Field(default="absolute")
+    # unit: float = Field(default=None)
     primary_unit: PrimaryUnit = Field(default="g")
     carbohydrate: Optional[float] = Field(default=None)
     protein: Optional[float] = Field(default=None)

@@ -20,12 +20,13 @@ def generate_food_data():
             "className": row["식품중분류명"],
             "totalWeight": float(row["식품중량"]),
             "primaryUnit": "g",
+            "unitEnum": "absolute",
             "carbohydrate": row["탄수화물(g)"],
             "protein": row["단백질(g)"],
             "fat": row["지방(g)"],
-            "sugar": row["당류(g)"],
+            "sugar": None if row["당류(g)"] == "해당없음" else row["당류(g)"],
             "energy": row["에너지(kcal)"],
-            "foodtype": "general",
+            "type": "general",
         }
 
         # 헤더에 'Content-Type'을 'application/json'으로 설정

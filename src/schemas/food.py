@@ -3,7 +3,7 @@ from typing import Optional, Union
 from src.utils.response import CamelModel
 
 from .tag import TagInfo
-from .unit import AbsoluteUnit, FoodType, PrimaryUnit, SingleUnit, TotalUnit
+from .unit import AbsoluteUnit, FoodType, PrimaryUnit, SingleUnit, TotalUnit, UnitEnum
 
 
 class Nutrients(CamelModel):
@@ -61,6 +61,7 @@ class FoodCreateBody(CamelModel):
     class_name: Optional[str]
     manufacturer: Optional[str]
     total_weight: float
+    UnitEnum: UnitEnum
     primary_unit: PrimaryUnit = "g"
     carbohydrate: Optional[float]
     protein: Optional[float]
