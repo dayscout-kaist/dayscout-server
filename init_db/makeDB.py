@@ -17,14 +17,15 @@ def generate_food_data():
         food_data = {
             "name": row["식품명"],
             "represent_name": row["대표식품명"],
-            "class_name": row["식품중분류명"],
-            "total_weight": row["식품중량"],
-            "per_unit": "g",  # 예시로 'g'를 기본 단위로 설정
+            "className": row["식품중분류명"],
+            "totalWeight": float(row["식품중량"]),
+            "primaryUnit": "g",
             "carbohydrate": row["탄수화물(g)"],
             "protein": row["단백질(g)"],
             "fat": row["지방(g)"],
             "sugar": row["당류(g)"],
             "energy": row["에너지(kcal)"],
+            "foodtype": "general",
         }
 
         # 헤더에 'Content-Type'을 'application/json'으로 설정
