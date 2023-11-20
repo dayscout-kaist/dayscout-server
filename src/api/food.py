@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
-from src.schemas import FoodInfo, FoodName
-from src.services import get_product_name_from_barcode, search_food_by_text
+from src.schemas import Food, FoodInfo, FoodName
+from src.services import create_food, get_product_name_from_barcode, search_food_by_text
 
 router = APIRouter()
 
@@ -15,3 +15,10 @@ async def search_by_text(q: str) -> list[FoodInfo]:
 async def search_by_barcode(q: int) -> FoodName:
     food_name = await get_product_name_from_barcode(q)
     return FoodName(name=food_name)
+
+
+@router.post("/create")
+async def create(body: Food) -> bool:
+    if create_food(body):
+        return True
+    raise HTTPException(status_code=409, detail="Conflict")
