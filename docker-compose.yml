@@ -9,12 +9,15 @@ services:
     environment:
       - ES_URL=http://elasticsearch:9200
       - ES_INDEX=${ES_INDEX}
-      # - CLOVA_API_URL=${CLOVA_API_URL}
       - CLOVA_CLIENT_SECRET=${CLOVA_CLIENT_SECRET?}
+      - MYSQL_USER_NAME=root
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD?}
+      - MYSQL_HOST=mysql
     networks:
       - server
     depends_on:
       - elasticsearch
+      - mysql
 
   elasticsearch:
     container_name: dayscout-elasticsearch
@@ -26,7 +29,7 @@ services:
         target: /usr/share/elasticsearch/config/elasticsearch.yml
         read_only: true
       - type: bind
-        source: ./data
+        source: ./data/elasticsearch
         target: /usr/share/elasticsearch/data
     ports:
       - "${ES_PORT?}:9200"
@@ -55,6 +58,19 @@ services:
       - elk
     depends_on:
       - elasticsearch
+
+  mysql:
+    container_name: dayscout-mysql
+    image: mysql:8.2.0
+    volumes:
+      - type: bind
+        source: ./data/mysql
+        target: /var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD?}
+    networks:
+      - server
+
 
 networks:
   elk:

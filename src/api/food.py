@@ -1,31 +1,20 @@
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException
 
-from src.schemas import Food, FoodContentOptional, FoodInfo, FoodName
-from src.services import (
-    create_food,
-    get_product_name_from_barcode,
-    parse_nutrients_from_image,
-    search_food_by_text,
-)
+from src.schemas import Food, FoodInfo, FoodName
+from src.services import create_food, get_product_name_from_barcode, search_food_by_text
 
 router = APIRouter()
 
 
-@router.get("/search")
-async def search_by_text(query: str) -> list[FoodInfo]:
-    return await search_food_by_text(query)
+@router.get("/search/text")
+async def search_by_text(q: str) -> list[FoodInfo]:
+    return await search_food_by_text(q)
 
 
 @router.get("/search/barcode")
-async def search_by_barcode(code: int) -> FoodName:
-    food_name = await get_product_name_from_barcode(code)
+async def search_by_barcode(q: int) -> FoodName:
+    food_name = await get_product_name_from_barcode(q)
     return FoodName(name=food_name)
-
-
-@router.post("/ocr")
-async def search_by_image(file: UploadFile) -> FoodContentOptional:
-    image = await file.read()
-    return await parse_nutrients_from_image(image)
 
 
 @router.post("/create")
