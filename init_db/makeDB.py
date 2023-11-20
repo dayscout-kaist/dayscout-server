@@ -17,7 +17,7 @@ def generate_food_data():
         food_data = {
             "name": row["식품명"],
             "representName": row["대표식품명"],
-            "className": str(row["식품중분류명"]),
+            "className": None if row["식품중분류명"] == "해당없음" else row["식품중분류명"],
             "totalWeight": float(row["식품중량"]),
             "primaryUnit": "g",
             "unit": "absolute",
