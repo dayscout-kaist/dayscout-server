@@ -69,7 +69,6 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD?}
     networks:
-      - mysql
       - server
 
 
@@ -77,6 +76,4 @@ networks:
   elk:
     driver: bridge
   server:
-    driver: bridge
-  mysql:
     driver: bridge
