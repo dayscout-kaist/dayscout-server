@@ -5,15 +5,10 @@ from sqlmodel import Field, SQLModel
 from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 
-class FoodInfo(SQLModel, table=True):
+class ReviewInfo(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
-    name: str = Field(default=None)
-    represent_name: Optional[str] = Field(default=None)
-    class_name: Optional[str] = Field(default=None)
-    manufacturer: Optional[str] = Field(default=None)
-    total_weight: float = Field(default=None)
-    unit: UnitEnum = Field(default="absolute")
-    primary_unit: PrimaryUnit = Field(default="g")
+    foodInfoId: int = Field(default=None)
+    author: str = Field(default=None)
     carbohydrate: Optional[float] = Field(default=None)
     protein: Optional[float] = Field(default=None)
     fat: Optional[float] = Field(default=None)
