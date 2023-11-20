@@ -10,7 +10,9 @@ services:
       - ES_URL=http://elasticsearch:9200
       - ES_INDEX=${ES_INDEX}
       - CLOVA_CLIENT_SECRET=${CLOVA_CLIENT_SECRET?}
-      - DB_PASSWORD=${DB_PASSWORD?}
+      - MYSQL_USER_NAME=root
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD?}
+      - MYSQL_HOST=mysql
     networks:
       - server
     depends_on:
@@ -65,7 +67,7 @@ services:
         source: ./data/mysql
         target: /var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD?}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD?}
     networks:
       - mysql
       - server

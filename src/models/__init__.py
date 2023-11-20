@@ -5,6 +5,6 @@ from src.settings import settings
 from .food import *
 from .userInfo import *
 
-DATABASE_URL = f"mysql+mysqldb://{settings.USER_NAME}:{settings.DB_PASSWORD}@{settings.HOST_NAME}/{settings.DB_NAME}"
+DATABASE_URL = f"mysql+mysqldb://{settings.MYSQL_USER_NAME}:{settings.MYSQL_PASSWORD}@{settings.MYSQL_HOST}/{settings.MYSQL_DB_NAME}"
 engine = create_engine(DATABASE_URL, echo=True)
 SQLModel.metadata.create_all(engine)
