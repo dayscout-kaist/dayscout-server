@@ -4,6 +4,11 @@ from typing import Literal
 from src.utils.response import CamelModel
 
 
+class FoodType(str, Enum):
+    general = "general"
+    distribution = "distribution"
+
+
 class AbsoluteUnit(CamelModel):
     """
     100g 당 영양 성분

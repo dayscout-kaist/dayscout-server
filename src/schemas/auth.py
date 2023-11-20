@@ -1,6 +1,5 @@
 from typing import Optional
 
-from src.models import UserInfo
 from src.utils.response import CamelModel
 
 

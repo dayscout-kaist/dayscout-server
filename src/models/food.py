@@ -2,16 +2,17 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
-from src.schemas.food import FoodType
-from src.schemas.unit import PrimaryUnit
+from src.schemas.unit import FoodType, PrimaryUnit
 
 
-class Food(SQLModel, table=True):
-    name: str = Field(default=None, primary_key=True)
-    represent_name: str = Field(default=None)
-    class_name: str = Field(default=None)
-    total_weight: str = Field(default=None)
-    per_unit: PrimaryUnit = Field(default="g")
+class FoodInfo(SQLModel, table=True):
+    id: int = Field(primary_key=True, default=None, index=True)
+    name: str = Field(default=None)
+    represent_name: Optional[str] = Field(default=None)
+    class_name: Optional[str] = Field(default=None)
+    manufacturer: Optional[str] = Field(default=None)
+    total_weight: float = Field(default=None)
+    primary_unit: PrimaryUnit = Field(default="g")
     carbohydrate: Optional[float] = Field(default=None)
     protein: Optional[float] = Field(default=None)
     fat: Optional[float] = Field(default=None)

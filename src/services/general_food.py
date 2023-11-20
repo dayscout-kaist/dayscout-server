@@ -3,10 +3,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 from src.models import engine
-from src.schemas import Food
+from src.schemas import FoodCreateBody
 
 
-def create_food(food: Food):
+def create_food(food: FoodCreateBody):
     try:
         with Session(engine) as session:
             session.add(food)
