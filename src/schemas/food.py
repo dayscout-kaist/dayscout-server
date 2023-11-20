@@ -21,10 +21,9 @@ class FoodContent(CamelModel):
     nutrients: Nutrients
 
 
-class FoodContentOptional(FoodContent):
-    total_weight: Optional[float]
-    unit: Optional[Union[AbsoluteUnit, TotalUnit, SingleUnit]]
-    primary_unit: Optional[PrimaryUnit]
+class FoodType(str, Enum):
+    general = "general"
+    distribution = "distribution"
 
 
 class FoodInfo(CamelModel):
@@ -34,13 +33,14 @@ class FoodInfo(CamelModel):
     content: FoodContent
 
 
+class FoodContentOptional(FoodContent):
+    total_weight: Optional[float]
+    unit: Optional[Union[AbsoluteUnit, TotalUnit, SingleUnit]]
+    primary_unit: Optional[PrimaryUnit]
+
+
 class FoodName(CamelModel):
     name: str
-
-
-class FoodType(str, Enum):
-    general = "general"
-    distribution = "distribution"
 
 
 class Food(CamelModel):
