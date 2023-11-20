@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from src.schemas import Food, FoodInfo, FoodName
+from src.schemas import Food, FoodInfo
 from src.services import create_food, get_product_name_from_barcode, search_food_by_text
 
 router = APIRouter()
@@ -12,9 +12,10 @@ async def search_by_text(q: str) -> list[FoodInfo]:
 
 
 @router.get("/search/barcode")
-async def search_by_barcode(q: int) -> FoodName:
-    food_name = await get_product_name_from_barcode(q)
-    return FoodName(name=food_name)
+async def search_by_barcode(q: int) -> list[FoodInfo]:
+    return []
+    # food_name = await get_product_name_from_barcode(q)
+    # return FoodName(name=food_name)
 
 
 @router.post("/create")

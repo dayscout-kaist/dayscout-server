@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.api import auth, food, nutrient, review
+from src.api import allproductkorea, auth, food, nutrient, review
 
 from .settings import settings
 
@@ -14,3 +14,6 @@ app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(food.router, prefix="/food", tags=["food"])
 app.include_router(nutrient.router, prefix="/nutrient", tags=["nutrient"])
 app.include_router(review.router, prefix="/review", tags=["review"])
+app.include_router(
+    allproductkorea.router, prefix="/allproductkorea", tags=["allproductkorea"]
+)

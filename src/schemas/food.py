@@ -6,6 +6,11 @@ from src.utils.response import CamelModel
 from .unit import AbsoluteUnit, PrimaryUnit, SingleUnit, TotalUnit
 
 
+class FoodType(str, Enum):
+    general = "general"
+    distribution = "distribution"
+
+
 class Nutrients(CamelModel):
     carbohydrate: Optional[float] = None
     protein: Optional[float] = None
@@ -21,11 +26,6 @@ class FoodContent(CamelModel):
     nutrients: Nutrients
 
 
-class FoodType(str, Enum):
-    general = "general"
-    distribution = "distribution"
-
-
 class FoodInfo(CamelModel):
     name: str
     category: str
@@ -37,10 +37,6 @@ class FoodContentOptional(FoodContent):
     total_weight: Optional[float]
     unit: Optional[Union[AbsoluteUnit, TotalUnit, SingleUnit]]
     primary_unit: Optional[PrimaryUnit]
-
-
-class FoodName(CamelModel):
-    name: str
 
 
 class Food(CamelModel):
