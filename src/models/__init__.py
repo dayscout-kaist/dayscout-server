@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, create_engine
 
 from src.settings import settings
 
-from .dbFood import *
+from .food import *
 from .userInfo import *
 
 DATABASE_URL = f"mysql+mysqldb://{settings.USER_NAME}:{settings.DB_PASSWORD}@{settings.HOST_NAME}/{settings.DB_NAME}"

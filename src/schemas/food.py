@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, Union
 
 from src.utils.response import CamelModel
@@ -35,3 +36,22 @@ class FoodInfo(CamelModel):
 
 class FoodName(CamelModel):
     name: str
+
+
+class FoodType(str, Enum):
+    general = "general"
+    distribution = "distribution"
+
+
+class Food(CamelModel):
+    name: str
+    represent_name: str
+    class_name: str
+    total_weight: str
+    per_unit: PrimaryUnit
+    carbohydrate: Optional[float]
+    protein: Optional[float]
+    fat: Optional[float]
+    sugar: Optional[float]
+    energy: Optional[float]
+    type: FoodType

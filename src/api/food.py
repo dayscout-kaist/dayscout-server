@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, UploadFile
 
-from src.models import Standard_food
-from src.schemas import FoodContentOptional, FoodInfo, FoodName
+from src.schemas import Food, FoodContentOptional, FoodInfo, FoodName
 from src.services import (
     create_food,
     get_product_name_from_barcode,
@@ -30,7 +29,7 @@ async def search_by_image(file: UploadFile) -> FoodContentOptional:
 
 
 @router.post("/create")
-async def create(body: Standard_food) -> bool:
+async def create(body: Food) -> bool:
     if create_food(body):
         return True
     raise HTTPException(status_code=409, detail="Conflict")

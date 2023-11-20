@@ -1,13 +1,12 @@
-from bcrypt import checkpw, gensalt, hashpw
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, select
-from starlette.requests import Request
+from sqlmodel import Session
 
-from src.models import Standard_food, engine
+from src.models import engine
+from src.schemas import Food
 
 
-def create_food(food: Standard_food):
+def create_food(food: Food):
     try:
         with Session(engine) as session:
             session.add(food)
