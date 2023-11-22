@@ -2,7 +2,7 @@ from humps import camelize
 from pydantic import BaseModel
 
 
-class CamelModel(BaseModel):
+class RequestModel(BaseModel):
     class Config:
         alias_generator = camelize
         populate_by_name = True

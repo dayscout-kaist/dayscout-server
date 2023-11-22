@@ -1,11 +1,19 @@
 from sqlmodel import Session, select
 
 from src.models import PostModel, engine
-from src.schemas import Post, PostCreateBody
+from src.schemas import Post, PostCreateBody, UserInfoSession
 
 
-def create_post(body: PostCreateBody) -> bool:
-    post = PostModel.from_orm(body)
+def create_post(body: PostCreateBody, userInfo: UserInfoSession) -> bool:
+    post = PostModel.from_orm(
+        {
+            "content": body.content,
+            "food_id": body.food_id,
+            "user_id": userInfo["id"],
+            "tags": [],
+        }
+    )
+    print(post)
     with Session(engine) as session:
         session.add(post)
         session.commit()

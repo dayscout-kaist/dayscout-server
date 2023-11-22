@@ -1,12 +1,11 @@
 from datetime import datetime
 
-from src.utils.response import CamelModel, ResponseModel
+from src.utils.response import RequestModel, ResponseModel
 
 
-class PostCreateBody(CamelModel):
+class PostCreateBody(RequestModel):
     content: str
     food_id: int
-    user_id: int
 
 
 class Post(ResponseModel):
