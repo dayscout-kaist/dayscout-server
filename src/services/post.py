@@ -1,23 +1,27 @@
-from sqlmodel import Session, select
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session
 
 from src.models import PostModel, engine
 from src.schemas import Post, PostCreateBody, UserInfoSession
 
 
-def create_post(body: PostCreateBody, userInfo: UserInfoSession) -> bool:
-    post = PostModel.from_orm(
-        {
-            "content": body.content,
-            "food_id": body.food_id,
-            "user_id": userInfo["id"],
-            "tags": [],
-        }
-    )
-    print(post)
-    with Session(engine) as session:
-        session.add(post)
-        session.commit()
-    return True
+def create_post(body: PostCreateBody, userInfo: UserInfoSession) -> int:
+    try:
+        with Session(engine) as session:
+            post = PostModel(
+                content=body.content,
+                food_id=body.food_id,
+                user_id=userInfo["id"],
+            )
+            session.add(post)
+            session.commit()
+            session.refresh(post)
+
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    return post.id
 
 
 def search_post_by_food_id(food_id: int) -> list[Post]:

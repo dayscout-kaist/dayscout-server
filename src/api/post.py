@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/create")
-async def create(request: Request, body: PostCreateBody) -> bool:
+async def create(request: Request, body: PostCreateBody) -> int:
     userInfo = getAuthorizedUserInfo(request)
     return create_post(body, userInfo)
 

@@ -1,5 +1,3 @@
-from typing import Union
-
 from fastapi import APIRouter, HTTPException
 from starlette.requests import Request
 
