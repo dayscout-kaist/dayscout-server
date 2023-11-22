@@ -2,16 +2,17 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
-from src.models import engine
-from src.schemas import FoodCreateBody
+from src.models import EditModel, engine
+from src.schemas import FoodEditBody
 
 
-def create_food(food: FoodCreateBody):
+def edit_food(body: FoodEditBody):
+    Edit = EditModel.from_orm(body)
     try:
         with Session(engine) as session:
-            session.add(food)
+            session.add(Edit)
             session.commit()
-            session.refresh(food)
+            session.refresh(Edit)
 
         return True
     except IntegrityError:

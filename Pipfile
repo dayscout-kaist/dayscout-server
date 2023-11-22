@@ -20,6 +20,7 @@ cssselect = "*"
 pandas = "*"
 requests = "*"
 openpyxl = "*"
+pydantic-sqlalchemy = "*"
 
 [dev-packages]
 black = "*"

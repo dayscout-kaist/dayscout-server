@@ -4,13 +4,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 from starlette.requests import Request
 
-from src.models import UserInfo, engine
+from src.models import UserModel, engine
 from src.schemas import LoginBody, RegisterBody, UserInfoSession
 
 
 def login_user(request: Request, body: LoginBody) -> bool:
     with Session(engine) as session:
-        query = select(UserInfo).where(UserInfo.email == body.email)
+        query = select(UserModel).where(UserModel.email == body.email)
         user = session.exec(query).first()
 
     if user == None:
@@ -29,7 +29,7 @@ def login_user(request: Request, body: LoginBody) -> bool:
 def register_user(body: RegisterBody) -> bool:
     try:
         body.password = hashpw(body.password.encode("utf-8"), gensalt()).decode("utf-8")
-        user = UserInfo.from_orm(body)
+        user = UserModel.from_orm(body)
         with Session(engine) as session:
             session.add(user)
             session.commit()
