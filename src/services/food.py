@@ -36,7 +36,7 @@ def inquiry_food(food_id: int):
         with Session(engine) as session:
             food_info = session.query(FoodModel).filter(FoodModel.id == food_id).first()
             edit_info = (
-                session.query(EditModel).filter(EditModel.food_info_id == food_id).all()
+                session.query(EditModel).filter(EditModel.food_id == food_id).all()
             )
 
             carbohydrate_avg = (

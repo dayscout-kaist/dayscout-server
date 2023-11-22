@@ -7,7 +7,7 @@ from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 class EditModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
-    food_info_id: int = Field(default=None)
+    food_id: int = Field(default=None, foreign_key="food.id")
     author: str = Field(default=None)
     carbohydrate: Optional[float] = Field(default=None)
     protein: Optional[float] = Field(default=None)
