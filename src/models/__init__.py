@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, create_engine
 from src.settings import settings
 
 from .food import *
+from .post import *
 from .tag import *
 from .userInfo import *
 

@@ -1,9 +1,15 @@
 from datetime import datetime
 
-from src.utils.response import CamelModel
+from src.utils.response import CamelModel, ResponseModel
 
 
-class Post(CamelModel):
+class PostCreateBody(CamelModel):
+    content: str
+    food_id: int
+    user_id: int
+
+
+class Post(ResponseModel):
     id: int
     content: str
     food_id: int
