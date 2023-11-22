@@ -42,3 +42,9 @@ class PrimaryUnit(str, Enum):
 
     g = "g"
     ml = "ml"
+
+
+class UnitEnum(str, Enum):
+    absolulteUnit = "absolute"
+    totalUnit = "total"
+    singleUnit = "single"

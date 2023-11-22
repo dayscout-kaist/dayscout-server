@@ -1,11 +1,11 @@
 from elasticsearch import AsyncElasticsearch
-from src.schemas import AbsoluteUnit, FoodContent, FoodInfo, Nutrients, PrimaryUnit
+from src.schemas import AbsoluteUnit, FoodContent, FoodDetail, Nutrients, PrimaryUnit
 from src.settings import settings
 
 es = AsyncElasticsearch(hosts=settings.ES_URL)
 
 
-def aggregate_nutrition(food_item: dict) -> FoodInfo:
+def aggregate_nutrition(food_item: dict) -> FoodDetail:
     nutrients = Nutrients(
         fat=food_item["fat"],
         carbohydrate=food_item["carbohydrate"],
@@ -21,7 +21,7 @@ def aggregate_nutrition(food_item: dict) -> FoodInfo:
         nutrients=nutrients,
     )
 
-    return FoodInfo(
+    return FoodDetail(
         name=food_item["name"],
         category="todo",
         manufacturer=food_item["manufacturer"],
@@ -29,7 +29,7 @@ def aggregate_nutrition(food_item: dict) -> FoodInfo:
     )
 
 
-async def search_food_by_text(text: str) -> list[FoodInfo]:
+async def search_food_by_text(text: str) -> list[FoodDetail]:
     results = await es.search(
         index=settings.ES_INDEX,
         body={"query": {"match": {"text_for_search": text}}},
