@@ -5,9 +5,9 @@ from sqlmodel import Field, SQLModel
 from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 
-class ReviewInfo(SQLModel, table=True):
+class EditModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
-    foodInfoId: int = Field(default=None)
+    food_info_id: int = Field(default=None)
     author: str = Field(default=None)
     carbohydrate: Optional[float] = Field(default=None)
     protein: Optional[float] = Field(default=None)

@@ -20,7 +20,7 @@ def generate_food_data():
             "className": row["식품중분류명"],
             "totalWeight": float(row["식품중량"]),
             "primaryUnit": "g",
-            "unitEnum": "absolute",
+            "unit": "absolute",
             "carbohydrate": row["탄수화물(g)"],
             "protein": row["단백질(g)"],
             "fat": row["지방(g)"],

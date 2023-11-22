@@ -5,7 +5,7 @@ from sqlmodel import Field, SQLModel
 from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 
-class FoodInfo(SQLModel, table=True):
+class FoodModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
     name: str = Field(default=None)
     represent_name: Optional[str] = Field(default=None)

@@ -3,11 +3,11 @@ from typing import Optional, Union
 from src.utils.response import CamelModel
 
 from .tag import TagInfo
-from .unit import AbsoluteUnit, FoodType, PrimaryUnit, SingleUnit, TotalUnit, UnitEnum
+from .unit import FoodType
 
 
-class ReviewCreateBody(CamelModel):
-    foodInfoId: int
+class EditCreateBody(CamelModel):
+    food_info_id: int
     author: Optional[str]
     carbohydrate: Optional[float]
     protein: Optional[float]

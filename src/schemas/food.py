@@ -1,5 +1,7 @@
 from typing import Optional, Union
 
+from pydantic import BaseModel
+
 from src.utils.response import CamelModel
 
 from .tag import TagInfo
@@ -20,6 +22,7 @@ class GeneralFoodContent(CamelModel):
     unit: AbsoluteUnit
     primary_unit: PrimaryUnit = "g"
     nutrients: Nutrients
+    original_nutrients: Nutrients
 
 
 class DistributionFoodContent(CamelModel):
@@ -31,11 +34,11 @@ class DistributionFoodContent(CamelModel):
     suggested_nutrients: Optional[Nutrients] = None
 
 
-class FoodInfo(CamelModel):
+class FoodDetail(BaseModel):
     id: int
     name: str
-    tag: list[TagInfo] = []
-    content: Union[GeneralFoodContent, DistributionFoodContent]
+    tag: Optional[list[TagInfo]] = []
+    content: Optional[Union[GeneralFoodContent, DistributionFoodContent]]
 
 
 ## 아래는 미정
@@ -61,7 +64,7 @@ class FoodCreateBody(CamelModel):
     class_name: Optional[str]
     manufacturer: Optional[str]
     total_weight: float
-    UnitEnum: UnitEnum
+    unit: UnitEnum
     primary_unit: PrimaryUnit = "g"
     carbohydrate: Optional[float]
     protein: Optional[float]
