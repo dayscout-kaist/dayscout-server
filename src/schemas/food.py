@@ -50,6 +50,16 @@ class FoodContent(CamelModel):
     primary_unit: PrimaryUnit
     nutrients: Nutrients
     suggested_nutrients: Nutrients
+    nutrients: Optional[Nutrients]
+    original_nutrients: Optional[Nutrients]
+    suggested_nutrients: Optional[Nutrients]
+
+
+class FoodInfo(CamelModel):
+    name: str
+    # category: str
+    manufacturer: Optional[str] = None
+    content: FoodContent
 
 
 class FoodContentOptional(FoodContent):
