@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
 
-from src.schemas import FoodCreateBody, FoodDetail
+from src.schemas import FoodCreateBody, FoodDetail, FoodEditBody
 from src.services import (
     create_food,
+    edit_food,
     get_product_name_from_barcode,
     inquiry_food,
     search_food_by_text,
@@ -23,6 +24,14 @@ async def search_by_barcode(q: int) -> list[FoodDetail]:
     # return FoodName(name=food_name)
 
 
+@router.get("/detail/{food_id}")
+async def inquiry(food_id: int) -> FoodDetail:
+    food_detail = inquiry_food(food_id)
+    if food_detail:
+        return food_detail
+    raise HTTPException(status_code=409, detail="Conflict")
+
+
 @router.post("/create")
 async def create(body: FoodCreateBody) -> bool:
     if create_food(body):
@@ -30,9 +39,8 @@ async def create(body: FoodCreateBody) -> bool:
     raise HTTPException(status_code=409, detail="Conflict")
 
 
-@router.get("/detail/{food_id}")
-async def inquiry(food_id: int) -> FoodDetail:
-    food_detail = inquiry_food(food_id)
-    if food_detail:
-        return food_detail
+@router.post("/edit")
+async def edit(body: FoodEditBody) -> bool:
+    if edit_food(body):
+        return True
     raise HTTPException(status_code=409, detail="Conflict")

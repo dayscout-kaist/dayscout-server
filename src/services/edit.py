@@ -3,10 +3,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 from src.models import EditModel, engine
-from src.schemas import EditCreateBody
+from src.schemas import FoodEditBody
 
 
-def create_edit(body: EditCreateBody):
+def edit_food(body: FoodEditBody):
     Edit = EditModel.from_orm(body)
     try:
         with Session(engine) as session:
