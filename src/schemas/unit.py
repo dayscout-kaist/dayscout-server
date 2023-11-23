@@ -48,3 +48,8 @@ class UnitEnum(str, Enum):
     absolulteUnit = "absolute"
     totalUnit = "total"
     singleUnit = "single"
+
+
+class ConfirmEnum(int, Enum):
+    good = 1
+    bad = -1
