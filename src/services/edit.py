@@ -14,9 +14,7 @@ def edit_food(body: FoodEditBody):
             session.commit()
             session.refresh(edit)
 
-        return True
     except IntegrityError:
         return False
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Intentional server error")
+
+    return True

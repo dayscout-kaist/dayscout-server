@@ -1,18 +1,17 @@
-from typing import Union
-
 from fastapi import APIRouter, HTTPException
 from starlette.requests import Request
 
 from src.schemas import LoginBody, RegisterBody, UserInfoSession
 from src.services import login_user, register_user
+from src.utils.auth import getAuthorizedUserInfo
 
 router = APIRouter()
 
 
 @router.get("/")
-async def info(request: Request) -> Union[UserInfoSession, dict]:
-    userInfo = request.session.get("userInfo")
-    return {} if userInfo == None else userInfo
+async def info(request: Request) -> UserInfoSession:
+    userInfo = getAuthorizedUserInfo(request)
+    return userInfo
 
 
 @router.post("/login")
@@ -24,11 +23,8 @@ async def login(request: Request, body: LoginBody) -> bool:
 
 @router.get("/logout")
 async def logout(request: Request) -> bool:
-    userInfo = request.session.get("userInfo")
-    if userInfo != None:
-        request.session.clear()
-        return True
-    return False
+    request.session.clear()
+    return True
 
 
 @router.post("/register")

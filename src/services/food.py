@@ -24,12 +24,10 @@ def create_food(body: FoodCreateBody):
             session.commit()
             session.refresh(food)
 
-        return True
     except IntegrityError:
         return False
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Intentional server error")
+
+    return True
 
 
 def inquiry_general(food_info: FoodModel, food_id: int, session: Session):
@@ -138,6 +136,3 @@ def inquiry_food(food_id: int):
 
     except IntegrityError:
         return False
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Intentional server error")

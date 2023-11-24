@@ -1,20 +1,20 @@
 from typing import Optional
 
-from src.utils.response import CamelModel
+from src.utils.response import RequestModel
 
 
-class UserInfoSession(CamelModel):
+class UserInfoSession(RequestModel):
     id: int
     email: str
     username: str
 
 
-class LoginBody(CamelModel):
+class LoginBody(RequestModel):
     email: str
     password: str
 
 
-class RegisterBody(CamelModel):
+class RegisterBody(RequestModel):
     email: str
     username: str
     password: str

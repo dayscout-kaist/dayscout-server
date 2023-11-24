@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Literal
 
-from src.utils.response import CamelModel
+from src.utils.response import RequestModel
 
 
 class FoodType(str, Enum):
@@ -9,7 +9,7 @@ class FoodType(str, Enum):
     distribution = "distribution"
 
 
-class AbsoluteUnit(CamelModel):
+class AbsoluteUnit(RequestModel):
     """
     100g 당 영양 성분
     """
@@ -17,7 +17,7 @@ class AbsoluteUnit(CamelModel):
     type: Literal["absolute"] = "absolute"
 
 
-class TotalUnit(CamelModel):
+class TotalUnit(RequestModel):
     """
     총 내용량 당 영양 성분
     """
@@ -25,7 +25,7 @@ class TotalUnit(CamelModel):
     type: Literal["total"] = "total"
 
 
-class SingleUnit(CamelModel):
+class SingleUnit(RequestModel):
     """
     단위 섭취량 당 영양 성분
     """

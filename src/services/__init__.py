@@ -4,5 +4,6 @@ from .edit import *
 from .elasticsearch import *
 from .food import *
 from .ocr import *
+from .post import *
 from .report import *
 from .tag import *
