@@ -3,8 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 from src.models import TagModel, engine
-from src.schemas import TagCreateBody
-from src.schemas import TagInfo as Tag
+from src.schemas import Tag, TagCreateBody
 
 
 def search_all_tags() -> list[Tag]:

@@ -2,12 +2,12 @@ from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 
-from src.schemas import TagCreateBody, TagInfo
+from src.schemas import Tag, TagCreateBody
 from src.services import create_tag, remove_tag_by_id, search_all_tags
 
 
 @router.get("/search/all")
-async def search_all() -> list[TagInfo]:
+async def search_all() -> list[Tag]:
     return search_all_tags()
 
 
