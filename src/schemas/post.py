@@ -6,6 +6,7 @@ from src.utils.response import RequestModel, ResponseModel
 class PostCreateBody(RequestModel):
     content: str
     food_id: int
+    tag_ids: list[int] = []
 
 
 class Post(ResponseModel):

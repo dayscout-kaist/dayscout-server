@@ -18,5 +18,5 @@ class PostModel(SQLModel, table=True):
 
 class PostTagModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
-    post_id: int = Field(default=None, foreign_key="postmodel.id")
-    tag_id: int = Field(default=None, foreign_key="tagmodel.id")
+    post_id: int = Field(foreign_key="postmodel.id")
+    tag_id: int = Field(foreign_key="tagmodel.id")
