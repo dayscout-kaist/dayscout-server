@@ -6,6 +6,7 @@ import httpx
 from lxml import html
 from pydantic import BaseModel
 
+from src.models import FoodModel
 from src.schemas import Nutrients
 
 
@@ -39,9 +40,16 @@ def text(element, selector: str):
 
 
 def parse_nutrient_value(value: str) -> float:
-    return float(
+    value = (
         value.replace(" ", "").replace("g", "").replace("kcal", "").replace("m", "e-3")
     )
+    # "5e-3미만"을 0로 변환
+    if "미만" in value:
+        return 0
+    elif not value.isdigit():
+        return 0
+    else:
+        return float(value)
 
 
 async def get_product_list(keyword: str | int) -> list[Product]:
@@ -51,7 +59,7 @@ async def get_product_list(keyword: str | int) -> list[Product]:
             params={
                 "q": json.dumps({"mainKeyword": keyword, "subKeyword": ""}),
                 "page": 1,
-                "size": 1000,
+                "size": 10,
             },
         )
 
@@ -63,17 +71,17 @@ async def get_product_list(keyword: str | int) -> list[Product]:
     ]
 
 
-async def get_product_by_id(id: int) -> ProductWithDetails:
+async def get_product_by_id(id: int) -> FoodModel:
     async with httpx.AsyncClient(verify=False) as client:
         response = await client.get(
             f"http://www.allproductkorea.or.kr/products/info/korcham/{id}"
         )
 
     if response.status_code == 500:
+        return None
         raise Exception("Invalid product id")
 
     document = html.fromstring(response.text)
-
     info_table = single(document, ".pdv_wrap_korcham > table")
 
     large_category, medium_category, small_category, x_small_category = text(
@@ -95,22 +103,43 @@ async def get_product_by_id(id: int) -> ProductWithDetails:
         sugar=nutrient_dict.get("당류"),
         energy=nutrient_dict.get("열량"),
     )
+    if not text(info_table, "td.originVolume").isdigit():
+        return None
 
-    return ProductWithDetails(
-        id=id,
+    return FoodModel(
+        type="distribution",
         name=text(document, "h3.detail"),
         image_src=single(document, ".pdv_img > img")
         .get("src")
         .replace("250_w", "1000_w"),
         barcode_number=text(info_table, "td.gtin"),
-        large_category=large_category,
-        medium_category=medium_category,
-        small_category=small_category,
-        x_small_category=x_small_category,
+        class_name=small_category,
+        represent_name=medium_category,
+        unit="abslolute",
+        primary_unit="g",
         display_name=text(info_table, "td.prdNmKor"),
         total_weight=text(info_table, "td.originVolume"),
-        nutrients=nutrients,
+        carbohydrate=nutrients.carbohydrate,
+        protein=nutrients.protein,
+        fat=nutrients.fat,
+        sugar=nutrients.sugar,
+        energy=nutrients.energy,
     )
+    # return ProductWithDetails(
+    #     id=id,
+    #     name=text(document, "h3.detail"),
+    #     image_src=single(document, ".pdv_img > img")
+    #     .get("src")
+    #     .replace("250_w", "1000_w"),
+    #     barcode_number=text(info_table, "td.gtin"),
+    #     large_category=large_category,
+    #     medium_category=medium_category,
+    #     small_category=small_category,
+    #     x_small_category=x_small_category,
+    #     display_name=text(info_table, "td.prdNmKor"),
+    #     total_weight=text(info_table, "td.originVolume"),
+    #     nutrients=nutrients,
+    # )
 
 
 async def get_product_from_barcode(barcode_number: int):

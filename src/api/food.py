@@ -5,28 +5,28 @@ from src.services import (
     confirm_report,
     create_food,
     edit_food,
-    get_product_name_from_barcode,
+    get_product_by_barcode,
+    get_product_by_text,
     inquiry_food,
     report_food,
-    search_food_by_text,
 )
 
 router = APIRouter()
 
 
 @router.get("/search/text")
-async def search_by_text(q: str) -> list[FoodDetail]:
-    return await search_food_by_text(q)
+async def search_by_text(text: str) -> list[FoodDetail]:
+    return await get_product_by_text(text)
 
 
 @router.get("/search/barcode")
-async def search_by_barcode(q: int) -> list[FoodDetail]:
-    return []
+async def search_by_barcode(barcode_number: float) -> FoodDetail:
+    return await get_product_by_barcode(barcode_number)
     # food_name = await get_product_name_from_barcode(q)
     # return FoodName(name=food_name)
 
 
-@router.get("/detail/{food_id}")
+@router.get("/detail")
 async def inquiry(food_id: int) -> FoodDetail:
     food_detail = inquiry_food(food_id)
     if food_detail:

@@ -16,8 +16,8 @@ def generate_food_data():
     for index, row in df.iterrows():
         food_data = {
             "name": row["식품명"],
-            "represent_name": row["대표식품명"],
-            "className": row["식품중분류명"],
+            "representName": row["대표식품명"],
+            "className": str(row["식품중분류명"]),
             "totalWeight": float(row["식품중량"]),
             "primaryUnit": "g",
             "unit": "absolute",
