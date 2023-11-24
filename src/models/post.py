@@ -1,7 +1,17 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
-from sqlmodel import JSON, Column, Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+
+class TagModel(SQLModel, table=True):
+    id: int = Field(primary_key=True, default=None, index=True)
+    name: str = Field(index=True, unique=True)
+    color_background: Optional[str]
+    color_border: Optional[str]
+
+    # 관계 정의
+    post_tags: List["PostTagModel"] = Relationship(back_populates="tag")
 
 
 class PostModel(SQLModel, table=True):
@@ -11,12 +21,15 @@ class PostModel(SQLModel, table=True):
     user_id: int = Field(foreign_key="foodmodel.id")
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-    # Needed for Column(JSON)
-    class Config:
-        arbitrary_types_allowed = True
+    # 관계 정의
+    post_tags: List["PostTagModel"] = Relationship(back_populates="post")
 
 
 class PostTagModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
     post_id: int = Field(foreign_key="postmodel.id")
     tag_id: int = Field(foreign_key="tagmodel.id")
+
+    # 관계 정의
+    post: PostModel = Relationship(back_populates="post_tags")
+    tag: TagModel = Relationship(back_populates="post_tags")

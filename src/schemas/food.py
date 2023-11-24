@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from src.utils.response import RequestModel, ResponseModel
 
-from .tag import TagInfo
+from .tag import Tag
 from .unit import (
     AbsoluteUnit,
     ConfirmEnum,
@@ -43,7 +43,7 @@ class DistributionFoodContent(RequestModel):
 class FoodDetail(ResponseModel):
     id: int
     name: str
-    tag: Optional[list[TagInfo]] = []
+    tag: Optional[list[Tag]] = []
     content: Optional[Union[GeneralFoodContent, DistributionFoodContent]]
 
 
