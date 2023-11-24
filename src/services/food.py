@@ -14,6 +14,11 @@ from src.schemas import (
     GeneralFoodContent,
     Nutrients,
 )
+from src.services.product_db import (
+    get_product_by_id,
+    get_product_from_barcode,
+    get_product_list,
+)
 
 
 def create_food(body: FoodCreateBody):
@@ -75,12 +80,20 @@ def inquiry_general(food_info: FoodModel, food_id: int, session: Session):
     content = GeneralFoodContent(
         type="general",
         totalWeight=food_info.total_weight,
-        unit=AbsoluteUnit(),
+        unit="absolute",
+        representName=food_info.represent_name,
+        className=food_info.class_name,
         primaryUnit="g",
         nutrients=nutrients,
         originalNutrients=original_nutrients,
     )
-    food_detail = FoodDetail(id=food_id, name=food_info.name, tag=[], content=content)
+    food_detail = FoodDetail(
+        id=food_id,
+        name=food_info.name,
+        tag=[],
+        content=content,
+        image_src=food_info.image_src,
+    )
 
     return food_detail
 
@@ -93,8 +106,17 @@ def inquiry_distribution(food_info: FoodModel, food_id: int, session: Session):
         raise HTTPException(status_code=404, detail="Food not found")
     FoodInfo_Pydantic = sqlalchemy_to_pydantic(FoodModel, exclude=["id"])
     food_info = FoodInfo_Pydantic(**food_info.__dict__)
-    ReviewInfo_Pydantic = sqlalchemy_to_pydantic(ReviewModel, exclude=["id"])
-    review_info = ReviewInfo_Pydantic(**review_info.__dict__)
+    suggested_nutrients = None
+    if review_info:
+        ReviewInfo_Pydantic = sqlalchemy_to_pydantic(ReviewModel, exclude=["id"])
+        review_info = ReviewInfo_Pydantic(**review_info.__dict__)
+        suggested_nutrients = Nutrients(
+            carbohydrate=review_info.carbohydrate,
+            protein=review_info.protein,
+            fat=review_info.fat,
+            sugar=review_info.sugar,
+            energy=review_info.energy,
+        )
 
     nutrients = Nutrients(
         carbohydrate=food_info.carbohydrate,
@@ -104,24 +126,24 @@ def inquiry_distribution(food_info: FoodModel, food_id: int, session: Session):
         energy=food_info.energy,
     )
 
-    suggested_nutrients = Nutrients(
-        carbohydrate=review_info.carbohydrate,
-        protein=review_info.protein,
-        fat=review_info.fat,
-        sugar=review_info.sugar,
-        energy=review_info.energy,
-    )
     content = DistributionFoodContent(
         type="distribution",
         totalWeight=food_info.total_weight,
         manufacturer=food_info.manufacturer,
-        category=food_info.category,
+        representName=food_info.represent_name,
+        className=food_info.class_name,
         unit=food_info.unit,
         primaryUnit=food_info.primary_unit,
         nutrients=nutrients,
-        suggested_nutrients=suggested_nutrients,
+        suggestedNutrients=suggested_nutrients,
     )
-    food_detail = FoodDetail(id=food_id, name=food_info.name, tag=[], content=content)
+    food_detail = FoodDetail(
+        id=food_id,
+        name=food_info.name,
+        tag=[],
+        content=content,
+        image_src=food_info.image_src,
+    )
     return food_detail
 
 
@@ -136,3 +158,85 @@ def inquiry_food(food_id: int):
 
     except IntegrityError:
         return False
+
+
+async def get_product_by_text(text: str) -> list[FoodDetail]:
+    try:
+        with Session(engine) as session:
+            food_list = []
+            general_food_list = (
+                session.query(FoodModel).filter(FoodModel.name.ilike(text)).all()
+            )
+            for general_food in general_food_list:
+                food = inquiry_general(general_food, general_food.id, session)
+                food_list.append(food)
+
+            product_list = await get_product_list(text)
+            for product in product_list:
+                food_info = (
+                    session.query(FoodModel)
+                    .filter(FoodModel.barcode_number == product.barcode_number)
+                    .first()
+                )
+                if food_info:
+                    pass
+                else:
+                    food_info = await get_product_by_id(product.id)
+                    if food_info is None:
+                        continue
+
+                    session.add(food_info)
+                    session.commit()
+
+                nutrients = Nutrients(
+                    carbohydrate=food_info.carbohydrate,
+                    protein=food_info.protein,
+                    fat=food_info.fat,
+                    sugar=food_info.sugar,
+                    energy=food_info.energy,
+                )
+                content = DistributionFoodContent(
+                    type="distribution",
+                    totalWeight=food_info.total_weight,
+                    manufacturer=food_info.manufacturer,
+                    representName=food_info.represent_name,
+                    className=food_info.class_name,
+                    unit=food_info.unit,
+                    primaryUnit=food_info.primary_unit,
+                    nutrients=nutrients,
+                )
+
+                food_detail = FoodDetail(
+                    id=food_info.id,
+                    name=food_info.name,
+                    tag=[],
+                    content=content,
+                    image_src=food_info.image_src,
+                )
+                food_list.append(food_detail)
+
+            return food_list
+
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Not food Found")
+
+
+async def get_product_by_barcode(barcode_number: float) -> FoodDetail:
+    try:
+        with Session(engine) as session:
+            food_info = (
+                session.query(FoodModel)
+                .filter(FoodModel.barcode_number == barcode_number)
+                .first()
+            )
+            if food_info:
+                pass
+            else:
+                food_info = await get_product_from_barcode(int(barcode_number))
+                session.add(food_info)
+                session.commit()
+            food = inquiry_distribution(food_info, food_info.id, session)
+            return food
+
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Not food Found")

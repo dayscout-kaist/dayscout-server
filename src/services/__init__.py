@@ -5,5 +5,6 @@ from .elasticsearch import *
 from .food import *
 from .ocr import *
 from .post import *
+from .product_db import *
 from .report import *
 from .tag import *

@@ -25,7 +25,9 @@ class Nutrients(RequestModel):
 class GeneralFoodContent(RequestModel):
     type = "general"
     total_weight: float
-    unit: AbsoluteUnit
+    unit: UnitEnum
+    represent_name: Optional[str]
+    class_name: Optional[str]
     primary_unit: PrimaryUnit = "g"
     nutrients: Nutrients
     original_nutrients: Nutrients
@@ -34,8 +36,11 @@ class GeneralFoodContent(RequestModel):
 class DistributionFoodContent(RequestModel):
     type = "distribution"
     total_weight: float
+    unit: UnitEnum
     manufacturer: Optional[str] = None
-    category: str
+    represent_name: Optional[str]
+    class_name: Optional[str]
+    primary_unit: PrimaryUnit = "g"
     nutrients: Nutrients
     suggested_nutrients: Optional[Nutrients] = None
 
@@ -45,6 +50,7 @@ class FoodDetail(ResponseModel):
     name: str
     tag: Optional[list[Tag]] = []
     content: Optional[Union[GeneralFoodContent, DistributionFoodContent]]
+    image_src: Optional[str]
 
 
 ## 아래는 미정
@@ -88,6 +94,7 @@ class FoodCreateBody(RequestModel):
     sugar: Optional[float]
     energy: Optional[float]
     type: FoodType = "general"
+    img: Optional[str]
 
 
 class FoodEditBody(RequestModel):
