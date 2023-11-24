@@ -5,7 +5,7 @@ from sqlmodel import Field, SQLModel
 from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 
-class EditModel(SQLModel, table=True):
+class ReviewModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
     food_id: int = Field(default=None, foreign_key="foodmodel.id")
     author: str = Field(default=None)
@@ -14,4 +14,5 @@ class EditModel(SQLModel, table=True):
     fat: Optional[float] = Field(default=None)
     sugar: Optional[float] = Field(default=None)
     energy: Optional[float] = Field(default=None)
-    type: FoodType = Field(default="general")
+    reference: int = Field(default=0)
+    type: FoodType = Field()

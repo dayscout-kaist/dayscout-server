@@ -2,9 +2,9 @@ from sqlmodel import SQLModel, create_engine
 
 from src.settings import settings
 
-from .edit import *
 from .food import *
 from .post import *
+from .review import *
 from .tag import *
 from .user import *
 

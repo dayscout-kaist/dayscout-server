@@ -1,11 +1,13 @@
 from fastapi import APIRouter, HTTPException
 
-from src.schemas import FoodCreateBody, FoodDetail, FoodEditBody
+from src.schemas import FoodCreateBody, FoodDetail, FoodEditBody, ReportConfirmBody
 from src.services import (
+    confirm_report,
     create_food,
     edit_food,
     get_product_name_from_barcode,
     inquiry_food,
+    report_food,
     search_food_by_text,
 )
 
@@ -42,5 +44,19 @@ async def create(body: FoodCreateBody) -> bool:
 @router.post("/edit")
 async def edit(body: FoodEditBody) -> bool:
     if edit_food(body):
+        return True
+    raise HTTPException(status_code=409, detail="Conflict")
+
+
+@router.post("/report")
+async def edit(body: FoodEditBody) -> bool:
+    if report_food(body):
+        return True
+    raise HTTPException(status_code=409, detail="Conflict")
+
+
+@router.post("/report/confirm")
+async def confirm(body: ReportConfirmBody) -> bool:
+    if confirm_report(body):
         return True
     raise HTTPException(status_code=409, detail="Conflict")

@@ -11,6 +11,7 @@ class FoodModel(SQLModel, table=True):
     represent_name: Optional[str] = Field(default=None)
     class_name: Optional[str] = Field(default=None)
     manufacturer: Optional[str] = Field(default=None)
+    category: Optional[str] = Field(default=None)
     total_weight: float = Field(default=None)
     unit: UnitEnum = Field(default="absolute")
     primary_unit: PrimaryUnit = Field(default="g")

@@ -5,7 +5,15 @@ from pydantic import BaseModel
 from src.utils.response import RequestModel
 
 from .tag import TagInfo
-from .unit import AbsoluteUnit, FoodType, PrimaryUnit, SingleUnit, TotalUnit, UnitEnum
+from .unit import (
+    AbsoluteUnit,
+    ConfirmEnum,
+    FoodType,
+    PrimaryUnit,
+    SingleUnit,
+    TotalUnit,
+    UnitEnum,
+)
 
 
 class Nutrients(RequestModel):
@@ -93,3 +101,20 @@ class FoodEditBody(RequestModel):
     sugar: Optional[float]
     energy: Optional[float]
     type: FoodType = "general"
+
+
+class FoodReportBody(CamelModel):
+    food_id: int
+    author: Optional[str]
+    carbohydrate: Optional[float]
+    protein: Optional[float]
+    fat: Optional[float]
+    sugar: Optional[float]
+    energy: Optional[float]
+    reference: int
+    type: FoodType = "distribution"
+
+
+class ReportConfirmBody(CamelModel):
+    food_id: int
+    confirm: ConfirmEnum
