@@ -12,14 +12,10 @@ async def search_all() -> list[TagInfo]:
 
 
 @router.post("/create")
-async def create(body: TagCreateBody) -> bool:
-    if create_tag(body):
-        return True
-    raise HTTPException(status_code=409, detail="Conflict")
+async def create(body: TagCreateBody) -> int:
+    return create_tag(body)
 
 
 @router.get("/remove")
-async def remove(id: int) -> bool:
-    if remove_tag_by_id(id):
-        return True
-    raise HTTPException(status_code=404, detail="Not Found")
+async def remove(id: int) -> int:
+    return remove_tag_by_id(id)

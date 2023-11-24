@@ -5,6 +5,6 @@ from sqlmodel import Field, SQLModel
 
 class TagModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
-    name: str = Field(default=None)
-    color_background: Optional[str] = Field(default=None)
-    color_border: Optional[str] = Field(default=None)
+    name: str = Field(index=True, unique=True)
+    color_background: Optional[str]
+    color_border: Optional[str]
