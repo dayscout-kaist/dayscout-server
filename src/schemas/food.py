@@ -1,8 +1,6 @@
 from typing import Optional, Union
 
-from pydantic import BaseModel
-
-from src.utils.response import RequestModel
+from src.utils.response import RequestModel, ResponseModel
 
 from .tag import TagInfo
 from .unit import (
@@ -42,7 +40,7 @@ class DistributionFoodContent(RequestModel):
     suggested_nutrients: Optional[Nutrients] = None
 
 
-class FoodDetail(BaseModel):
+class FoodDetail(ResponseModel):
     id: int
     name: str
     tag: Optional[list[TagInfo]] = []
@@ -103,7 +101,7 @@ class FoodEditBody(RequestModel):
     type: FoodType = "general"
 
 
-class FoodReportBody(CamelModel):
+class FoodReportBody(RequestModel):
     food_id: int
     author: Optional[str]
     carbohydrate: Optional[float]
@@ -115,6 +113,6 @@ class FoodReportBody(CamelModel):
     type: FoodType = "distribution"
 
 
-class ReportConfirmBody(CamelModel):
+class ReportConfirmBody(RequestModel):
     food_id: int
     confirm: ConfirmEnum
