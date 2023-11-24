@@ -2,13 +2,13 @@ from typing import Optional, Union
 
 from pydantic import BaseModel
 
-from src.utils.response import CamelModel
+from src.utils.response import RequestModel
 
 from .tag import TagInfo
 from .unit import AbsoluteUnit, FoodType, PrimaryUnit, SingleUnit, TotalUnit, UnitEnum
 
 
-class Nutrients(CamelModel):
+class Nutrients(RequestModel):
     carbohydrate: Optional[float] = None
     protein: Optional[float] = None
     fat: Optional[float] = None
@@ -16,7 +16,7 @@ class Nutrients(CamelModel):
     energy: Optional[float] = None
 
 
-class GeneralFoodContent(CamelModel):
+class GeneralFoodContent(RequestModel):
     type = "general"
     total_weight: float
     unit: AbsoluteUnit
@@ -25,7 +25,7 @@ class GeneralFoodContent(CamelModel):
     original_nutrients: Nutrients
 
 
-class DistributionFoodContent(CamelModel):
+class DistributionFoodContent(RequestModel):
     type = "distribution"
     total_weight: float
     manufacturer: Optional[str] = None
@@ -44,7 +44,7 @@ class FoodDetail(BaseModel):
 ## 아래는 미정
 
 
-class FoodContent(CamelModel):
+class FoodContent(RequestModel):
     total_weight: float
     unit: Union[AbsoluteUnit, TotalUnit, SingleUnit]
     primary_unit: PrimaryUnit
@@ -55,7 +55,7 @@ class FoodContent(CamelModel):
     suggested_nutrients: Optional[Nutrients]
 
 
-class FoodInfo(CamelModel):
+class FoodInfo(RequestModel):
     name: str
     # category: str
     manufacturer: Optional[str] = None
@@ -68,7 +68,7 @@ class FoodContentOptional(FoodContent):
     primary_unit: Optional[PrimaryUnit]
 
 
-class FoodCreateBody(CamelModel):
+class FoodCreateBody(RequestModel):
     name: str
     represent_name: Optional[str]
     class_name: Optional[str]
@@ -84,7 +84,7 @@ class FoodCreateBody(CamelModel):
     type: FoodType = "general"
 
 
-class FoodEditBody(CamelModel):
+class FoodEditBody(RequestModel):
     food_id: int
     author: Optional[str]
     carbohydrate: Optional[float]

@@ -1,10 +1,10 @@
-from src.utils.response import CamelModel
+from src.utils.response import RequestModel
 
 
-class TagInfo(CamelModel):
+class TagInfo(RequestModel):
     id: int
     name: str
 
 
-class TagCreateBody(CamelModel):
+class TagCreateBody(RequestModel):
     name: str

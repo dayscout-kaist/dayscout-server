@@ -33,9 +33,8 @@ def register_user(body: RegisterBody) -> bool:
         with Session(engine) as session:
             session.add(user)
             session.commit()
-        return True
+
     except IntegrityError:
-        return False
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Intentional server error")
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    return True
