@@ -17,8 +17,8 @@ class TagModel(SQLModel, table=True):
 class PostModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)
     content: str = Field(default=None)
-    food_id: int = Field(foreign_key="usermodel.id")
-    user_id: int = Field(foreign_key="foodmodel.id")
+    food_id: int = Field(foreign_key="foodmodel.id")
+    user_id: int = Field(foreign_key="usermodel.id")
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
     # 관계 정의
