@@ -56,6 +56,7 @@ class FoodDetail(ResponseModel):
 class Food(ResponseModel):
     id: int
     name: str
+    image_src: Optional[str]
 
 
 ## 아래는 미정

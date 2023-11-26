@@ -1,6 +1,12 @@
 from fastapi import APIRouter, HTTPException
 
-from src.schemas import FoodCreateBody, FoodDetail, FoodEditBody, ReportConfirmBody
+from src.schemas import (
+    Food,
+    FoodCreateBody,
+    FoodDetail,
+    FoodEditBody,
+    ReportConfirmBody,
+)
 from src.services import (
     confirm_report,
     create_food,
@@ -24,14 +30,14 @@ async def detail(id: int) -> FoodDetail:
     return get_food_detail(id)
 
 
-@router.get("/search/byText")
-async def search_by_text(text: str) -> list[FoodDetail]:
-    return await search_food_by_text(text)
-
-
 @router.get("/search/byBarcode")
 async def search_by_barcode(barcode: str) -> FoodDetail:
     return await search_food_by_barcode(barcode)
+
+
+@router.get("/search/byText")
+async def search_by_text(text: str) -> list[Food]:
+    return await search_food_by_text(text)
 
 
 @router.post("/review")

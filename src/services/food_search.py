@@ -1,9 +1,10 @@
+import asyncio
+
 from fastapi import HTTPException
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from src.models import FoodModel, engine
-from src.schemas import DistributionFoodContent, FoodDetail, Nutrients
+from src.schemas import Food, FoodDetail
 from src.services.product_db import (
     get_product_by_id,
     get_product_from_barcode,
@@ -13,65 +14,35 @@ from src.services.product_db import (
 from .food import get_distribution_food_detail, get_food_detail
 
 
-async def search_food_by_text(text: str) -> list[FoodDetail]:
+async def create_food_by_product_id(product_id: int) -> int | None:
     try:
+        food = await get_product_by_id(product_id)
         with Session(engine) as session:
-            food_list = []
-            general_food_list = (
-                session.query(FoodModel).filter(FoodModel.name.ilike(text)).all()
-            )
-            for general_food in general_food_list:
-                food = inquiry_general(general_food, general_food.id, session)
-                food_list.append(food)
+            session.add(food)
+            session.commit()
+            session.refresh(food)
 
-            product_list = await get_product_list(text)
-            for product in product_list:
-                food_info = (
-                    session.query(FoodModel)
-                    .filter(FoodModel.barcode_number == product.barcode_number)
-                    .first()
-                )
-                if food_info:
-                    pass
-                else:
-                    food_info = await get_product_by_id(product.id)
-                    if food_info is None:
-                        continue
+    except Exception:
+        return None
 
-                    session.add(food_info)
-                    session.commit()
+    return food.id
 
-                nutrients = Nutrients(
-                    carbohydrate=food_info.carbohydrate,
-                    protein=food_info.protein,
-                    fat=food_info.fat,
-                    sugar=food_info.sugar,
-                    energy=food_info.energy,
-                )
-                content = DistributionFoodContent(
-                    type="distribution",
-                    totalWeight=food_info.total_weight,
-                    manufacturer=food_info.manufacturer,
-                    representName=food_info.represent_name,
-                    className=food_info.class_name,
-                    unit=food_info.unit,
-                    primaryUnit=food_info.primary_unit,
-                    nutrients=nutrients,
-                )
 
-                food_detail = FoodDetail(
-                    id=food_info.id,
-                    name=food_info.name,
-                    tag=[],
-                    content=content,
-                    image_src=food_info.image_src,
-                )
-                food_list.append(food_detail)
+async def search_food_by_text(text: str) -> list[Food]:
+    products = await get_product_list(text)
+    await asyncio.gather(
+        *[create_food_by_product_id(product.id) for product in products]
+    )
 
-            return food_list
+    with Session(engine) as session:
+        foods = session.exec(
+            select(FoodModel).where(FoodModel.name.ilike(f"%{text}%"))
+        ).all()
+        print(foods)
 
-    except IntegrityError:
-        raise HTTPException(status_code=404, detail="Not food Found")
+    return [
+        Food(id=food.id, name=food.name, image_src=food.image_src) for food in foods
+    ]
 
 
 async def search_food_by_barcode(barcode: str) -> FoodDetail:
