@@ -30,7 +30,7 @@ async def search_by_text(text: str) -> list[FoodDetail]:
 
 
 @router.get("/search/byBarcode")
-async def search_by_barcode(barcode: int) -> FoodDetail:
+async def search_by_barcode(barcode: str) -> FoodDetail:
     return await search_food_by_barcode(barcode)
 
 

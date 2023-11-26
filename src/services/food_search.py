@@ -10,6 +10,8 @@ from src.services.product_db import (
     get_product_list,
 )
 
+from .food import get_distribution_food_detail, get_food_detail
+
 
 async def search_food_by_text(text: str) -> list[FoodDetail]:
     try:
@@ -72,22 +74,21 @@ async def search_food_by_text(text: str) -> list[FoodDetail]:
         raise HTTPException(status_code=404, detail="Not food Found")
 
 
-async def search_food_by_barcode(barcode: int) -> FoodDetail:
-    try:
-        with Session(engine) as session:
-            food_info = (
-                session.query(FoodModel)
-                .filter(FoodModel.barcode_number == barcode)
-                .first()
-            )
-            if food_info:
-                pass
-            else:
-                food_info = await get_product_from_barcode(int(barcode))
-                session.add(food_info)
-                session.commit()
-            food = inquiry_distribution(food_info, food_info.id, session)
-            return food
+async def search_food_by_barcode(barcode: str) -> FoodDetail:
+    with Session(engine) as session:
+        food = (
+            session.query(FoodModel).filter(FoodModel.barcode_number == barcode).first()
+        )
 
-    except IntegrityError:
-        raise HTTPException(status_code=404, detail="Not food Found")
+    if food == None:
+        try:
+            food = await get_product_from_barcode(int(barcode))
+        except Exception:
+            raise HTTPException(status_code=404, detail="Not food Found")
+
+        with Session(engine) as session:
+            session.add(food)
+            session.commit()
+            session.refresh(food)
+
+    return get_distribution_food_detail(food)

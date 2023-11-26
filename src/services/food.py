@@ -13,8 +13,6 @@ from src.schemas import (
     Nutrients,
 )
 
-from .food_search import *
-
 
 def create_food(body: FoodCreateBody) -> int:
     try:
