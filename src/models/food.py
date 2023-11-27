@@ -40,6 +40,7 @@ class ReportModel(SQLModel, table=True):
     sugar: Optional[float]
     energy: Optional[float]
     reference: int = Field(default=0)
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
     food: FoodModel = Relationship(back_populates="reports")
-    __table_args__ = (UniqueConstraint("food_id", "user_id"),)
+    # __table_args__ = (UniqueConstraint("food_id", "user_id"),)

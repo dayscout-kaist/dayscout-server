@@ -2,12 +2,21 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
-from src.models import FoodModel, ReviewModel, engine
+from src.models import FoodModel, ReportModel, engine
 from src.schemas import ReportConfirmBody, ReportCreateBody, UserInfoSession
 
 
-def create_report(body: ReportCreateBody, userInfo: UserInfoSession):
-    report = ReviewModel.from_orm(body)
+def create_report(body: ReportCreateBody, userInfo: UserInfoSession) -> int:
+    report = ReportModel(
+        food_id=body.food_id,
+        user_id=userInfo.id,
+        carbohydrate=body.nutrients.carbohydrate,
+        protein=body.nutrients.protein,
+        fat=body.nutrients.fat,
+        sugar=body.nutrients.sugar,
+        energy=body.nutrients.energy,
+        reference=1,
+    )
     try:
         with Session(engine) as session:
             session.add(report)

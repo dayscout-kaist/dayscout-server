@@ -1,16 +1,14 @@
 from src.utils.response import ResponseModel
 
 from .food import Nutrients
-from .unit import ConfirmEnum, FoodType
+from .unit import ConfirmEnum
 
 
 class ReportCreateBody(ResponseModel):
     food_id: int
     nutrients: Nutrients
-    reference: int
-    type: FoodType = "distribution"
 
 
 class ReportConfirmBody(ResponseModel):
-    food_id: int
+    report_id: int
     confirm: ConfirmEnum
