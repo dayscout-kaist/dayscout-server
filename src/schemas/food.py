@@ -112,20 +112,3 @@ class FoodEditBody(RequestModel):
     sugar: Optional[float]
     energy: Optional[float]
     type: FoodType = "general"
-
-
-class FoodReportBody(RequestModel):
-    food_id: int
-    author: Optional[str]
-    carbohydrate: Optional[float]
-    protein: Optional[float]
-    fat: Optional[float]
-    sugar: Optional[float]
-    energy: Optional[float]
-    reference: int
-    type: FoodType = "distribution"
-
-
-class ReportConfirmBody(RequestModel):
-    food_id: int
-    confirm: ConfirmEnum

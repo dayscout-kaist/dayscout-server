@@ -3,10 +3,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 from src.models import FoodModel, ReviewModel, engine
-from src.schemas import FoodReportBody, ReportConfirmBody, UserInfoSession
+from src.schemas import ReportConfirmBody, ReportCreateBody, UserInfoSession
 
 
-def create_report(body: FoodReportBody, userInfo: UserInfoSession):
+def create_report(body: ReportCreateBody, userInfo: UserInfoSession):
     report = ReviewModel.from_orm(body)
     try:
         with Session(engine) as session:
@@ -14,12 +14,10 @@ def create_report(body: FoodReportBody, userInfo: UserInfoSession):
             session.commit()
             session.refresh(report)
 
-        return True
     except IntegrityError:
-        return False
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Intentional server error")
+        raise HTTPException(status_code=409, detail="Conflict")
+
+    return report.id
 
 
 def confirm_report(body: ReportConfirmBody):
