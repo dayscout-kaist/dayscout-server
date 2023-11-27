@@ -2,8 +2,6 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
-from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
-
 
 class ReviewModel(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None, index=True)

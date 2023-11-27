@@ -4,7 +4,9 @@ from src.settings import settings
 
 from .food import *
 from .post import *
+from .report import *
 from .review import *
+from .tag import *
 from .user import *
 
 DATABASE_URL = f"mysql+mysqldb://{settings.MYSQL_USER_NAME}:{settings.MYSQL_PASSWORD}@{settings.MYSQL_HOST}/{settings.MYSQL_DB_NAME}"
