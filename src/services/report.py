@@ -3,10 +3,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 from src.models import FoodModel, ReviewModel, engine
-from src.schemas import ConfirmEnum, FoodReportBody, ReportConfirmBody
+from src.schemas import FoodReportBody, ReportConfirmBody, UserInfoSession
 
 
-def report_food(body: FoodReportBody):
+def create_report(body: FoodReportBody, userInfo: UserInfoSession):
     report = ReviewModel.from_orm(body)
     try:
         with Session(engine) as session:
