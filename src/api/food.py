@@ -1,62 +1,39 @@
 from fastapi import APIRouter, HTTPException
 
-from src.schemas import FoodCreateBody, FoodDetail, FoodEditBody, ReportConfirmBody
+from src.schemas import Food, FoodCreateBody, FoodDetail, FoodEditBody
 from src.services import (
-    confirm_report,
     create_food,
     edit_food,
-    get_product_by_barcode,
-    get_product_by_text,
-    inquiry_food,
-    report_food,
+    get_food_detail,
+    search_food_by_barcode,
+    search_food_by_text,
 )
 
 router = APIRouter()
 
 
-@router.get("/search/text")
-async def search_by_text(text: str) -> list[FoodDetail]:
-    return await get_product_by_text(text)
-
-
-@router.get("/search/barcode")
-async def search_by_barcode(barcode_number: float) -> FoodDetail:
-    return await get_product_by_barcode(barcode_number)
-    # food_name = await get_product_name_from_barcode(q)
-    # return FoodName(name=food_name)
+@router.post("/create")
+async def create(body: FoodCreateBody) -> int:
+    return create_food(body)
 
 
 @router.get("/detail")
-async def inquiry(food_id: int) -> FoodDetail:
-    food_detail = inquiry_food(food_id)
-    if food_detail:
-        return food_detail
-    raise HTTPException(status_code=409, detail="Conflict")
+async def detail(id: int) -> FoodDetail:
+    return get_food_detail(id)
 
 
-@router.post("/create")
-async def create(body: FoodCreateBody) -> bool:
-    if create_food(body):
-        return True
-    raise HTTPException(status_code=409, detail="Conflict")
+@router.get("/search/byBarcode")
+async def search_by_barcode(barcode: str) -> FoodDetail:
+    return await search_food_by_barcode(barcode)
 
 
-@router.post("/edit")
+@router.get("/search/byText")
+async def search_by_text(text: str) -> list[Food]:
+    return await search_food_by_text(text)
+
+
+@router.post("/review")
 async def edit(body: FoodEditBody) -> bool:
     if edit_food(body):
-        return True
-    raise HTTPException(status_code=409, detail="Conflict")
-
-
-@router.post("/report")
-async def edit(body: FoodEditBody) -> bool:
-    if report_food(body):
-        return True
-    raise HTTPException(status_code=409, detail="Conflict")
-
-
-@router.post("/report/confirm")
-async def confirm(body: ReportConfirmBody) -> bool:
-    if confirm_report(body):
         return True
     raise HTTPException(status_code=409, detail="Conflict")

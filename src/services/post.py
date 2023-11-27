@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from fastapi import HTTPException
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
-from src.models import PostModel, PostTagModel, TagModel, engine
+from src.models import PostModel, PostTagModel, engine
 from src.schemas import Post, PostCreateBody, Tag, UserInfoSession
 
 
@@ -35,12 +38,12 @@ def create_post(body: PostCreateBody, userInfo: UserInfoSession) -> int:
     return post.id
 
 
-def search_post_by_food_id(food_id: int) -> list[Post]:
+def search_post(*queries) -> list[Post]:
     with Session(engine) as session:
         posts = (
             session.exec(
                 select(PostModel)
-                .where(PostModel.food_id == food_id)
+                .where(*queries)
                 .options(joinedload(PostModel.post_tags).joinedload(PostTagModel.tag))
             )
             .unique()
@@ -67,3 +70,13 @@ def search_post_by_food_id(food_id: int) -> list[Post]:
         ]
 
     return posts
+
+
+def search_post_by_food_id(food_id: int) -> list[Post]:
+    return search_post(PostModel.food_id == food_id)
+
+
+def search_post_by_day(day: datetime, userInfo: UserInfoSession) -> list[Post]:
+    return search_post(
+        PostModel.user_id == userInfo["id"], func.date(PostModel.created_at)
+    )
