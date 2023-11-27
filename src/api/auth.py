@@ -16,9 +16,7 @@ async def info(request: Request) -> UserInfoSession:
 
 @router.post("/login")
 async def login(request: Request, body: LoginBody) -> bool:
-    if login_user(request, body):
-        return True
-    raise HTTPException(status_code=400, detail="Bad Request")
+    return login_user(request, body)
 
 
 @router.get("/logout")
@@ -29,6 +27,4 @@ async def logout(request: Request) -> bool:
 
 @router.post("/register")
 async def register(body: RegisterBody) -> bool:
-    if register_user(body):
-        return True
-    raise HTTPException(status_code=409, detail="Conflict")
+    return register_user(body)

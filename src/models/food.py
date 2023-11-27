@@ -1,24 +1,32 @@
-from typing import Optional
+from datetime import datetime
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlmodel import BigInteger, Column, Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 
 class FoodModel(SQLModel, table=True):
+    if TYPE_CHECKING:
+        from .report import ReportModel
+
     id: int = Field(primary_key=True, default=None, index=True)
-    name: str = Field(default=None)
-    represent_name: Optional[str] = Field(default=None)
-    class_name: Optional[str] = Field(default=None)
-    manufacturer: Optional[str] = Field(default=None)
-    total_weight: float = Field(default=None)
-    unit: UnitEnum = Field(default="absolute")
-    primary_unit: PrimaryUnit = Field(default="g")
-    carbohydrate: Optional[float] = Field(default=None)
-    protein: Optional[float] = Field(default=None)
-    fat: Optional[float] = Field(default=None)
-    sugar: Optional[float] = Field(default=None)
-    energy: Optional[float] = Field(default=None)
-    type: FoodType = Field(default="distribution")
-    image_src: Optional[str] = Field(default=None)
-    barcode_number: Optional[float] = Field(default=0, sa_column=Column(BigInteger))
+    name: str
+    represent_name: Optional[str]
+    class_name: Optional[str]
+    manufacturer: Optional[str]
+    total_weight: float
+    unit: UnitEnum
+    primary_unit: PrimaryUnit
+    carbohydrate: Optional[float]
+    protein: Optional[float]
+    fat: Optional[float]
+    sugar: Optional[float]
+    energy: Optional[float]
+    type: FoodType
+    image_src: Optional[str]
+    barcode_number: Optional[str] = Field(index=True, unique=True)
+    product_db_id: Optional[int] = Field(index=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+
+    reports: List["ReportModel"] = Relationship(back_populates="food")

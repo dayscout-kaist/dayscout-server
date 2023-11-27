@@ -66,8 +66,9 @@ async def get_product_list(keyword: str | int) -> list[Product]:
     document = html.fromstring(response.text)
 
     return [
-        parse_product_info(element)
+        parsed_info
         for element in document.cssselect("div.spl_list > ul > li")
+        if (parsed_info := parse_product_info(element)).large_category == "가공식품"
     ]
 
 
@@ -78,7 +79,6 @@ async def get_product_by_id(id: int) -> FoodModel:
         )
 
     if response.status_code == 500:
-        return None
         raise Exception("Invalid product id")
 
     document = html.fromstring(response.text)
@@ -88,14 +88,15 @@ async def get_product_by_id(id: int) -> FoodModel:
         info_table, ".clsTotalNm"
     ).split(">")
 
-    nutrient_rows = multi(document, "table.pop_list > tbody > tr")
+    if not text(info_table, "td.originVolume").isdigit():
+        raise Exception("Invalid totalWeight")
 
+    nutrient_rows = multi(document, "table.pop_list > tbody > tr")
     nutrient_dict = {
         cell[0].text_content(): parse_nutrient_value(cell[1].text_content())
         for cell in [multi(row, "td") for row in nutrient_rows]
         if len(cell) == 3
     }
-
     nutrients = Nutrients(
         carbohydrate=nutrient_dict.get("탄수화물"),
         protein=nutrient_dict.get("단백질"),
@@ -103,46 +104,30 @@ async def get_product_by_id(id: int) -> FoodModel:
         sugar=nutrient_dict.get("당류"),
         energy=nutrient_dict.get("열량"),
     )
-    if not text(info_table, "td.originVolume").isdigit():
-        return None
 
     return FoodModel(
-        type="distribution",
-        name=text(document, "h3.detail"),
-        image_src=single(document, ".pdv_img > img")
-        .get("src")
-        .replace("250_w", "1000_w"),
-        barcode_number=text(info_table, "td.gtin"),
-        class_name=small_category,
+        name=text(info_table, "td.prdNmKor"),
         represent_name=medium_category,
-        unit="abslolute",
-        primary_unit="g",
-        display_name=text(info_table, "td.prdNmKor"),
+        class_name=small_category,
         total_weight=text(info_table, "td.originVolume"),
+        unit="absolute",
+        primary_unit="g",
         carbohydrate=nutrients.carbohydrate,
         protein=nutrients.protein,
         fat=nutrients.fat,
         sugar=nutrients.sugar,
         energy=nutrients.energy,
+        type="distribution",
+        image_src=single(document, ".pdv_img > img")
+        .get("src")
+        .replace("250_w", "1000_w"),
+        product_db_id=id,
+        barcode_number=text(info_table, "td.gtin"),
+        # display_name=text(info_table, "td.prdNmKor"),
     )
-    # return ProductWithDetails(
-    #     id=id,
-    #     name=text(document, "h3.detail"),
-    #     image_src=single(document, ".pdv_img > img")
-    #     .get("src")
-    #     .replace("250_w", "1000_w"),
-    #     barcode_number=text(info_table, "td.gtin"),
-    #     large_category=large_category,
-    #     medium_category=medium_category,
-    #     small_category=small_category,
-    #     x_small_category=x_small_category,
-    #     display_name=text(info_table, "td.prdNmKor"),
-    #     total_weight=text(info_table, "td.originVolume"),
-    #     nutrients=nutrients,
-    # )
 
 
-async def get_product_from_barcode(barcode_number: int):
+async def get_product_from_barcode(barcode_number: int) -> FoodModel:
     # Search from database first
 
     # If not found, search from web
@@ -156,9 +141,7 @@ async def get_product_from_barcode(barcode_number: int):
     if len(product_list) == 0:
         raise Exception("No such barcode number")
 
-    product_id = product_list[0].id
-
-    return await get_product_by_id(product_id)
+    return await get_product_by_id(product_list[0].id)
 
 
 def parse_product_info(element) -> Product:
@@ -173,7 +156,6 @@ def parse_product_info(element) -> Product:
     large_category, medium_category, small_category, x_small_category = text(
         element, ".spl_pm"
     ).split(">")
-
     return Product(
         id=product_id,
         name=name,
