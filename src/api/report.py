@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from starlette.requests import Request
 
-from src.schemas import ReportConfirmBody, ReportCreateBody
+from src.schemas import Report, ReportConfirmBody, ReportCreateBody
 from src.services import confirm_report, create_report
 from src.utils.auth import getAuthorizedUserInfo
 
@@ -9,13 +9,12 @@ router = APIRouter()
 
 
 @router.post("/create")
-async def create(request: Request, body: ReportCreateBody) -> int:
+async def create(request: Request, body: ReportCreateBody) -> Report:
     userInfo = getAuthorizedUserInfo(request)
     return create_report(body, userInfo)
 
 
 @router.post("/confirm")
-async def confirm(body: ReportConfirmBody) -> bool:
-    if confirm_report(body):
-        return True
-    raise HTTPException(status_code=409, detail="Conflict")
+async def confirm(request: Request, body: ReportConfirmBody) -> Report:
+    userInfo = getAuthorizedUserInfo(request)
+    return confirm_report(body, userInfo)

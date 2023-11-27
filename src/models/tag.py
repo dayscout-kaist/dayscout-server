@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 
 
 class TagModel(SQLModel, table=True):
@@ -23,3 +23,5 @@ class PostTagModel(SQLModel, table=True):
 
     tag_id: int = Field(foreign_key="tagmodel.id")
     tag: "TagModel" = Relationship(back_populates="post_tags")
+
+    __table_args__ = (UniqueConstraint("post_id", "tag_id"),)

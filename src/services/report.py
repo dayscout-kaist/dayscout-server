@@ -1,64 +1,79 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session
+from sqlalchemy.orm import joinedload
+from sqlmodel import Session, select
 
-from src.models import FoodModel, ReportModel, engine
-from src.schemas import ReportConfirmBody, ReportCreateBody, UserInfoSession
+from src.models import ReportModel, UserReportModel, engine
+from src.schemas import (
+    Report,
+    ReportConfirmBody,
+    ReportCreateBody,
+    ReportReference,
+    UserInfoSession,
+)
 
 
-def create_report(body: ReportCreateBody, userInfo: UserInfoSession) -> int:
+def create_report(body: ReportCreateBody, userInfo: UserInfoSession) -> Report:
     report = ReportModel(
         food_id=body.food_id,
-        user_id=userInfo.id,
         carbohydrate=body.nutrients.carbohydrate,
         protein=body.nutrients.protein,
         fat=body.nutrients.fat,
         sugar=body.nutrients.sugar,
         energy=body.nutrients.energy,
-        reference=1,
     )
     try:
         with Session(engine) as session:
             session.add(report)
             session.commit()
             session.refresh(report)
-
     except IntegrityError:
         raise HTTPException(status_code=409, detail="Conflict")
 
-    return report.id
+    return confirm_report(ReportConfirmBody(reportId=report.id, confirm=1), userInfo)
 
 
-def confirm_report(body: ReportConfirmBody):
+def confirm_report(body: ReportConfirmBody, userInfo: UserInfoSession) -> Report:
+    user_report = UserReportModel(
+        user_id=userInfo["id"],
+        report_id=body.report_id,
+        confirm=body.confirm,
+    )
     try:
         with Session(engine) as session:
-            review = session.query(ReviewModel).filter_by(food_id=body.food_id).first()
-            print("review", review)
-            if review is not None:
-                print("body confirm", body.confirm)
-                review.reference = review.reference + body.confirm
-            if review.reference >= 3:
-                food = session.query(FoodModel).filter_by(id=body.food_id).first()
-                if food:
-                    # ReviewModel의 정보로 업데이트
-                    food.carbohydrate = review.carbohydrate
-                    food.fat = review.fat
-                    food.protein = review.protein
-                    food.sugar = review.sugar
-                    food.energy = review.energy
-                    session.delete(review)
-                else:
-                    raise HTTPException(status_code=404, detail="Food not found")
-            elif review.reference <= -3:
-                session.delete(review)
-
+            session.add(user_report)
             session.commit()
-
-            session.close()
-
-        return True
+            session.refresh(user_report)
     except IntegrityError:
-        return False
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Intentional server error")
+        raise HTTPException(status_code=409, detail="Conflict")
+
+    with Session(engine) as session:
+        report = session.exec(
+            select(ReportModel)
+            .where(ReportModel.id == user_report.report_id)
+            .options(joinedload(ReportModel.user_reports))
+        ).first()
+
+    if report is None:
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    return Report(
+        id=report.id,
+        food_id=report.food_id,
+        carbohydrate=report.carbohydrate,
+        protein=report.protein,
+        fat=report.fat,
+        sugar=report.sugar,
+        energy=report.energy,
+        reference=user_report.id,
+        created_at=report.created_at,
+        references=[
+            ReportReference(
+                id=user_report.id,
+                user_id=user_report.user_id,
+                confirm=user_report.confirm,
+                created_at=user_report.created_at,
+            )
+            for user_report in report.user_reports
+        ],
+    )
