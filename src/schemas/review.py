@@ -1,7 +1,4 @@
-# from datetime import datetime
-# from typing import List, Optional
-
-from src.utils.response import RequestModel, ResponseModel
+from src.utils.response import RequestModel
 
 from .food import Nutrients
 
