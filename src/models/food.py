@@ -7,6 +7,9 @@ from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 
 class FoodModel(SQLModel, table=True):
+    if TYPE_CHECKING:
+        from .report import ReportModel
+
     id: int = Field(primary_key=True, default=None, index=True)
     name: str
     represent_name: Optional[str]
@@ -26,6 +29,4 @@ class FoodModel(SQLModel, table=True):
     product_db_id: Optional[int] = Field(index=True)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-    if TYPE_CHECKING:
-        from .report import ReportModel
     reports: List["ReportModel"] = Relationship(back_populates="food")

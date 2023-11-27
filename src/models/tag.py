@@ -13,10 +13,11 @@ class TagModel(SQLModel, table=True):
 
 
 class PostTagModel(SQLModel, table=True):
-    id: int = Field(primary_key=True, default=None, index=True)
-
     if TYPE_CHECKING:
         from .post import PostModel
+
+    id: int = Field(primary_key=True, default=None, index=True)
+
     post_id: int = Field(foreign_key="postmodel.id")
     post: "PostModel" = Relationship(back_populates="post_tags")
 
