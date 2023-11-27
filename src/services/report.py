@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
-from src.models import ReportModel, UserReportModel, engine
+from src.models import FoodModel, ReportModel, UserReportModel, engine
 from src.schemas import (
     Report,
     ReportConfirmBody,
@@ -11,6 +11,9 @@ from src.schemas import (
     ReportReference,
     UserInfoSession,
 )
+
+# report confirm이 3번 이상 확인되면 자동으로 반영
+confirm_threshold = 3
 
 
 def create_report(body: ReportCreateBody, userInfo: UserInfoSession) -> Report:
@@ -21,6 +24,7 @@ def create_report(body: ReportCreateBody, userInfo: UserInfoSession) -> Report:
         fat=body.nutrients.fat,
         sugar=body.nutrients.sugar,
         energy=body.nutrients.energy,
+        is_valid=True,
     )
     try:
         with Session(engine) as session:
@@ -54,8 +58,35 @@ def confirm_report(body: ReportConfirmBody, userInfo: UserInfoSession) -> Report
             .options(joinedload(ReportModel.user_reports))
         ).first()
 
-    if report is None:
-        raise HTTPException(status_code=404, detail="Not Found")
+        if report == None or report.is_valid == False:
+            raise HTTPException(status_code=404, detail="Not Found")
+
+        sum_confirm = sum([user_report.confirm for user_report in report.user_reports])
+        if sum_confirm >= confirm_threshold:
+            food = session.query(FoodModel).filter_by(id=body.food_id).first()
+
+            if food is None:
+                raise HTTPException(status_code=404, detail="Not Found")
+
+            if report.carbohydrate is not None:
+                food.carbohydrate = report.carbohydrate
+            if report.protein is not None:
+                food.protein = report.protein
+            if report.fat is not None:
+                food.fat = report.fat
+            if report.sugar is not None:
+                food.sugar = report.sugar
+            if report.energy is not None:
+                food.energy = report.energy
+
+            report.is_valid = False
+            session.commit()
+            session.refresh(report)
+
+        elif sum_confirm <= -confirm_threshold:
+            report.is_valid = False
+            session.commit()
+            session.refresh(report)
 
     return Report(
         id=report.id,
@@ -67,6 +98,7 @@ def confirm_report(body: ReportConfirmBody, userInfo: UserInfoSession) -> Report
         energy=report.energy,
         reference=user_report.id,
         created_at=report.created_at,
+        sum_confirm=sum_confirm,
         references=[
             ReportReference(
                 id=user_report.id,

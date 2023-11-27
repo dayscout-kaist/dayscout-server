@@ -24,6 +24,7 @@ class Report(ResponseModel):
     energy: Optional[float]
     reference: int
     created_at: datetime
+    sum_confirm: int
     references: List[ReportReference]
 
 

@@ -16,6 +16,7 @@ class ReportModel(SQLModel, table=True):
     fat: Optional[float]
     sugar: Optional[float]
     energy: Optional[float]
+    is_valid: bool
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
     food_id: int = Field(foreign_key="foodmodel.id")
