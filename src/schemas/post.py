@@ -2,10 +2,13 @@ from datetime import datetime
 
 from src.utils.response import RequestModel, ResponseModel
 
+from .tag import Tag
+
 
 class PostCreateBody(RequestModel):
     content: str
     food_id: int
+    tag_ids: list[int] = []
 
 
 class Post(ResponseModel):
@@ -13,4 +16,5 @@ class Post(ResponseModel):
     content: str
     food_id: int
     user_id: int
+    tags: list[Tag] = []
     created_at: datetime

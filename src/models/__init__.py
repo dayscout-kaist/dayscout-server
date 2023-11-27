@@ -4,6 +4,7 @@ from src.settings import settings
 
 from .food import *
 from .post import *
+from .report import *
 from .review import *
 from .tag import *
 from .user import *

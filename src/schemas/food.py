@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from src.utils.response import RequestModel, ResponseModel
 
-from .tag import TagInfo
+from .tag import Tag
 from .unit import (
     AbsoluteUnit,
     ConfirmEnum,
@@ -14,15 +14,15 @@ from .unit import (
 )
 
 
-class Nutrients(RequestModel):
-    carbohydrate: Optional[float] = None
-    protein: Optional[float] = None
-    fat: Optional[float] = None
-    sugar: Optional[float] = None
-    energy: Optional[float] = None
+class Nutrients(ResponseModel):
+    carbohydrate: Optional[float]
+    protein: Optional[float]
+    fat: Optional[float]
+    sugar: Optional[float]
+    energy: Optional[float]
 
 
-class GeneralFoodContent(RequestModel):
+class GeneralFoodContent(ResponseModel):
     type = "general"
     total_weight: float
     unit: UnitEnum
@@ -33,23 +33,29 @@ class GeneralFoodContent(RequestModel):
     original_nutrients: Nutrients
 
 
-class DistributionFoodContent(RequestModel):
+class DistributionFoodContent(ResponseModel):
     type = "distribution"
     total_weight: float
     unit: UnitEnum
-    manufacturer: Optional[str] = None
+    manufacturer: Optional[str]
     represent_name: Optional[str]
     class_name: Optional[str]
     primary_unit: PrimaryUnit = "g"
     nutrients: Nutrients
-    suggested_nutrients: Optional[Nutrients] = None
+    suggested_nutrients: Optional[Nutrients]
 
 
 class FoodDetail(ResponseModel):
     id: int
     name: str
-    tag: Optional[list[TagInfo]] = []
-    content: Optional[Union[GeneralFoodContent, DistributionFoodContent]]
+    tag: list[Tag]
+    content: Union[GeneralFoodContent, DistributionFoodContent]
+    image_src: Optional[str]
+
+
+class Food(ResponseModel):
+    id: int
+    name: str
     image_src: Optional[str]
 
 
@@ -69,7 +75,6 @@ class FoodContent(RequestModel):
 
 class FoodInfo(RequestModel):
     name: str
-    # category: str
     manufacturer: Optional[str] = None
     content: FoodContent
 
@@ -94,7 +99,8 @@ class FoodCreateBody(RequestModel):
     sugar: Optional[float]
     energy: Optional[float]
     type: FoodType = "general"
-    img: Optional[str]
+    image_src: Optional[str]
+    barcode_number: Optional[str]
 
 
 class FoodEditBody(RequestModel):
@@ -106,20 +112,3 @@ class FoodEditBody(RequestModel):
     sugar: Optional[float]
     energy: Optional[float]
     type: FoodType = "general"
-
-
-class FoodReportBody(RequestModel):
-    food_id: int
-    author: Optional[str]
-    carbohydrate: Optional[float]
-    protein: Optional[float]
-    fat: Optional[float]
-    sugar: Optional[float]
-    energy: Optional[float]
-    reference: int
-    type: FoodType = "distribution"
-
-
-class ReportConfirmBody(RequestModel):
-    food_id: int
-    confirm: ConfirmEnum

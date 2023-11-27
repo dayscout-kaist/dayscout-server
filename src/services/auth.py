@@ -14,9 +14,9 @@ def login_user(request: Request, body: LoginBody) -> bool:
         user = session.exec(query).first()
 
     if user == None:
-        return False
+        raise HTTPException(status_code=400, detail="Bad Request")
     if not checkpw(body.password.encode("utf-8"), user.password.encode("utf-8")):
-        return False
+        raise HTTPException(status_code=400, detail="Bad Request")
 
     request.session["userInfo"]: UserInfoSession = {
         "id": user.id,
@@ -35,6 +35,6 @@ def register_user(body: RegisterBody) -> bool:
             session.commit()
 
     except IntegrityError:
-        raise HTTPException(status_code=404, detail="Not Found")
+        raise HTTPException(status_code=409, detail="Conflict")
 
     return True
