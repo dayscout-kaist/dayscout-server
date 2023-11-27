@@ -101,14 +101,3 @@ class FoodCreateBody(RequestModel):
     type: FoodType = "general"
     image_src: Optional[str]
     barcode_number: Optional[str]
-
-
-class FoodEditBody(RequestModel):
-    food_id: int
-    author: Optional[str]
-    carbohydrate: Optional[float]
-    protein: Optional[float]
-    fat: Optional[float]
-    sugar: Optional[float]
-    energy: Optional[float]
-    type: FoodType = "general"

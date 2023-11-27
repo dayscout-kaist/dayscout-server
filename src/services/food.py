@@ -8,7 +8,6 @@ from src.schemas import (
     DistributionFoodContent,
     FoodCreateBody,
     FoodDetail,
-    FoodEditBody,
     GeneralFoodContent,
     Nutrients,
 )
@@ -129,17 +128,3 @@ def get_food_detail(food_id: int) -> FoodDetail:
         if food.type == "general"
         else get_distribution_food_detail(food)
     )
-
-
-def edit_food(body: FoodEditBody):
-    edit = ReviewModel.from_orm(body)
-    try:
-        with Session(engine) as session:
-            session.add(edit)
-            session.commit()
-            session.refresh(edit)
-
-    except IntegrityError:
-        raise HTTPException(status_code=409, detail="Conflict")
-
-    return True

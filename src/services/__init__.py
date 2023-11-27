@@ -7,4 +7,5 @@ from .ocr import *
 from .post import *
 from .product_db import *
 from .report import *
+from .review import *
 from .tag import *
