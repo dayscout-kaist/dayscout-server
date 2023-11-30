@@ -6,7 +6,7 @@ from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
 from src.models import ReviewModel, ReviewTagModel, engine
-from src.schemas import CurrentUser, Review, ReviewCreateBody, Tag
+from src.schemas import CurrentUser, Nutrients, Review, ReviewCreateBody, Tag
 from src.utils.time import kst
 
 
@@ -50,7 +50,7 @@ def search_review(*queries) -> list[Review]:
                 select(ReviewModel)
                 .where(*queries)
                 .options(
-                    joinedload(ReviewModel.post_tags).joinedload(ReviewTagModel.tag)
+                    joinedload(ReviewModel.review_tags).joinedload(ReviewTagModel.tag)
                 )
             )
             .unique()
@@ -63,6 +63,13 @@ def search_review(*queries) -> list[Review]:
                 food_id=post.food_id,
                 user_id=post.user_id,
                 created_at=post.created_at,
+                nutrients=Nutrients(
+                    carbohydrate=post.carbohydrate,
+                    protein=post.protein,
+                    fat=post.fat,
+                    sugar=post.sugar,
+                    energy=post.energy,
+                ),
                 tags=[
                     Tag(
                         id=reviewTag.tag.id,
