@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from src.utils.response import RequestModel, ResponseModel
 
@@ -9,6 +10,10 @@ class PostCreateBody(RequestModel):
     content: str
     food_id: int
     tag_ids: list[int] = []
+
+
+class PostSearchByDayBody(RequestModel):
+    datestr: Optional[str]
 
 
 class Post(ResponseModel):
