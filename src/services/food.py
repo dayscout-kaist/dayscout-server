@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from src.models import FoodModel, PostModel, ReviewModel, engine
+from src.models import FoodModel, PostModel, ReportModel, engine
 from src.schemas import (
     DistributionFoodContent,
     FoodCreateBody,
@@ -27,7 +27,7 @@ def create_food(body: FoodCreateBody) -> int:
     return food.id
 
 
-def calculate_nutrient(values=[]) -> float | None:
+def calculate_nutrient(values=()) -> float | None:
     values = list(filter(lambda x: x != None, values))
     if len(values) == 0:
         return None
@@ -36,8 +36,8 @@ def calculate_nutrient(values=[]) -> float | None:
 
 def get_general_food_detail(food: FoodModel) -> FoodDetail:
     with Session(engine) as session:
-        reviews = (
-            session.query(ReviewModel).filter(ReviewModel.food_id == food.id).all()
+        reports = (
+            session.query(ReportModel).filter(ReportModel.food_id == food.id).all()
         )
         tag_list = get_tag_by_food_id(food.id, session)
 
@@ -48,13 +48,13 @@ def get_general_food_detail(food: FoodModel) -> FoodDetail:
         sugar=food.sugar,
         energy=food.energy,
     )
-    reviews.append(original_nutrients)
+    reports.append(original_nutrients)
     nutrients = Nutrients(
-        carbohydrate=calculate_nutrient([review.carbohydrate for review in reviews]),
-        protein=calculate_nutrient([review.protein for review in reviews]),
-        fat=calculate_nutrient([review.fat for review in reviews]),
-        sugar=calculate_nutrient([review.sugar for review in reviews]),
-        energy=calculate_nutrient([review.energy for review in reviews]),
+        carbohydrate=calculate_nutrient([report.carbohydrate for report in reports]),
+        protein=calculate_nutrient([report.protein for report in reports]),
+        fat=calculate_nutrient([report.fat for report in reports]),
+        sugar=calculate_nutrient([report.sugar for report in reports]),
+        energy=calculate_nutrient([report.energy for report in reports]),
     )
 
     return FoodDetail(
@@ -76,20 +76,20 @@ def get_general_food_detail(food: FoodModel) -> FoodDetail:
 
 def get_distribution_food_detail(food: FoodModel) -> FoodDetail:
     with Session(engine) as session:
-        reviews = (
-            session.query(ReviewModel).filter(ReviewModel.food_id == food.id).all()
+        reports = (
+            session.query(ReportModel).filter(ReportModel.food_id == food.id).all()
         )
         tag_list = get_tag_by_food_id(food.id, session)
 
     suggested_nutrients = (
         Nutrients(
-            carbohydrate=reviews[0].carbohydrate,
-            protein=reviews[0].protein,
-            fat=reviews[0].fat,
-            sugar=reviews[0].sugar,
-            energy=reviews[0].energy,
+            carbohydrate=reports[0].carbohydrate,
+            protein=reports[0].protein,
+            fat=reports[0].fat,
+            sugar=reports[0].sugar,
+            energy=reports[0].energy,
         )
-        if len(reviews) > 0
+        if len(reports) > 0
         else None
     )
 
