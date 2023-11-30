@@ -29,5 +29,4 @@ async def search_by_day(
     datestr = (
         datetime.today().strftime("%Y%m%d") if body.datestr == None else body.datestr
     )
-    print(datestr)
     return search_post_by_day(datestr, current_user)

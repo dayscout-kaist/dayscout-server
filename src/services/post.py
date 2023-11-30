@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi import HTTPException
 from sqlalchemy import func
@@ -8,11 +8,10 @@ from sqlmodel import Session, select
 
 from src.models import PostModel, PostTagModel, engine
 from src.schemas import CurrentUser, Post, PostCreateBody, Tag
+from src.utils.time import kst
 
 
 def create_post(body: PostCreateBody, current_user: CurrentUser) -> int:
-    print(body)
-    print(current_user)
     try:
         with Session(engine) as session:
             post = PostModel(
@@ -79,8 +78,9 @@ def search_post_by_food_id(food_id: int) -> list[Post]:
 
 
 def search_post_by_day(datestr: str, current_user: CurrentUser) -> list[Post]:
-    date = datetime.strptime(datestr, "%Y%m%d")
+    date = datetime.strptime(datestr, "%Y%m%d").astimezone(kst)
     return search_post(
         PostModel.user_id == current_user.id,
-        func.date(PostModel.created_at) == date.date(),
+        PostModel.created_at >= date - timedelta(hours=9),
+        PostModel.created_at < date + timedelta(days=1) - timedelta(hours=9),
     )
