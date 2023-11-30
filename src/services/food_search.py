@@ -50,6 +50,7 @@ async def search_food_by_text(text: str) -> list[Food]:
         Food(
             id=food.id,
             name=food.name,
+            type=food.type,
             tag=tag_dict[food.id],
             representName=food.represent_name,
             className=food.class_name,
