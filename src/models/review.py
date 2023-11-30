@@ -20,7 +20,9 @@ class ReviewModel(SQLModel, table=True):
 
     content: Optional[str]
 
-    food_id: int = Field(foreign_key="foodmodel.id")
+    food_id: Optional[int] = Field(
+        default=None, foreign_key="foodmodel.id", nullable=True
+    )
     food: "FoodModel" = Relationship(back_populates="reviews")
 
     user_id: int = Field(foreign_key="usermodel.id")

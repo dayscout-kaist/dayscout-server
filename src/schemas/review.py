@@ -8,7 +8,7 @@ from .tag import Tag
 
 
 class ReviewCreateBody(RequestModel):
-    food_id: int
+    food_id: Optional[int]
     nutrients: Nutrients
     content: Optional[str]
     tag_ids: list[int] = []
@@ -21,7 +21,7 @@ class ReviewSearchByDayBody(RequestModel):
 class Review(ResponseModel):
     id: int
     content: str
-    food_id: int
+    food_id: Optional[int]
     user_id: int
     nutrients: Nutrients
     tags: list[Tag] = []
