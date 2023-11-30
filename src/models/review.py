@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -7,6 +7,7 @@ from sqlmodel import Field, Relationship, SQLModel
 class ReviewModel(SQLModel, table=True):
     if TYPE_CHECKING:
         from .food import FoodModel
+        from .tag import ReviewTagModel
         from .user import UserModel
 
     id: int = Field(primary_key=True, default=None, index=True)
@@ -17,8 +18,12 @@ class ReviewModel(SQLModel, table=True):
     energy: Optional[float]
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
+    content: Optional[str]
+
     food_id: int = Field(foreign_key="foodmodel.id")
     food: "FoodModel" = Relationship(back_populates="reviews")
 
     user_id: int = Field(foreign_key="usermodel.id")
     user: "UserModel" = Relationship(back_populates="reviews")
+
+    review_tags: List["ReviewTagModel"] = Relationship(back_populates="review")

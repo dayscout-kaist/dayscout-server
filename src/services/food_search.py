@@ -1,10 +1,9 @@
 import asyncio
 
 from fastapi import HTTPException
-from sqlalchemy import func
 from sqlmodel import Session, select
 
-from src.models import FoodModel, PostModel, TagModel, engine
+from src.models import FoodModel, engine
 from src.schemas import Food, FoodDetail
 from src.services.product_db import (
     get_product_by_id,

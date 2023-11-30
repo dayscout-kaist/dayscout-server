@@ -9,19 +9,19 @@ class TagModel(SQLModel, table=True):
     color_background: Optional[str]
     color_border: Optional[str]
 
-    post_tags: List["PostTagModel"] = Relationship(back_populates="tag")
+    review_tags: List["ReviewTagModel"] = Relationship(back_populates="tag")
 
 
-class PostTagModel(SQLModel, table=True):
+class ReviewTagModel(SQLModel, table=True):
     if TYPE_CHECKING:
-        from .post import PostModel
+        from .review import ReviewModel
 
     id: int = Field(primary_key=True, default=None, index=True)
 
-    post_id: int = Field(foreign_key="postmodel.id")
-    post: "PostModel" = Relationship(back_populates="post_tags")
+    review_id: int = Field(foreign_key="reviewmodel.id")
+    review: "ReviewModel" = Relationship(back_populates="review_tags")
 
     tag_id: int = Field(foreign_key="tagmodel.id")
-    tag: "TagModel" = Relationship(back_populates="post_tags")
+    tag: "TagModel" = Relationship(back_populates="review_tags")
 
-    __table_args__ = (UniqueConstraint("post_id", "tag_id"),)
+    __table_args__ = (UniqueConstraint("review_id", "tag_id"),)
