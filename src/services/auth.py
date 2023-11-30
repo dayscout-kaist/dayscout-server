@@ -5,10 +5,11 @@ from sqlmodel import Session, select
 from starlette.requests import Request
 
 from src.models import UserModel, engine
-from src.schemas import LoginBody, RegisterBody, UserInfoSession
+from src.schemas import CurrentUser, LoginBody, RegisterBody
+from src.utils.auth import create_access_token, get_authorized_user
 
 
-def login_user(request: Request, body: LoginBody) -> UserInfoSession:
+def login_user(body: LoginBody) -> CurrentUser:
     with Session(engine) as session:
         query = select(UserModel).where(UserModel.email == body.email)
         user = session.exec(query).first()
@@ -18,15 +19,21 @@ def login_user(request: Request, body: LoginBody) -> UserInfoSession:
     if not checkpw(body.password.encode("utf-8"), user.password.encode("utf-8")):
         raise HTTPException(status_code=400, detail="Bad Request")
 
-    request.session["userInfo"] = UserInfoSession(
-        id=user.id,
-        email=user.email,
-        username=user.username,
+    token = create_access_token(
+        {
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+            "height": user.height,
+            "weight": user.weight,
+            "birth": user.birth,
+            "gender": user.gender,
+        }
     )
-    return request.session["userInfo"]
+    return get_authorized_user(token)
 
 
-def register_user(body: RegisterBody) -> bool:
+def register_user(body: RegisterBody) -> CurrentUser:
     try:
         body.password = hashpw(body.password.encode("utf-8"), gensalt()).decode("utf-8")
         user = UserModel.from_orm(body)
@@ -37,4 +44,9 @@ def register_user(body: RegisterBody) -> bool:
     except IntegrityError:
         raise HTTPException(status_code=409, detail="Conflict")
 
-    return True
+    return login_user(
+        LoginBody(
+            email=user.email,
+            password=user.password,
+        )
+    )

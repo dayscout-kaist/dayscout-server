@@ -5,18 +5,18 @@ from sqlmodel import Session, select
 
 from src.models import FoodModel, ReportModel, UserReportModel, engine
 from src.schemas import (
+    CurrentUser,
     Report,
     ReportConfirmBody,
     ReportCreateBody,
     ReportReference,
-    UserInfoSession,
 )
 
 # report confirm이 3번 이상 확인되면 자동으로 반영
 confirm_threshold = 3
 
 
-def create_report(body: ReportCreateBody, userInfo: UserInfoSession) -> Report:
+def create_report(body: ReportCreateBody, userInfo: CurrentUser) -> Report:
     report = ReportModel(
         food_id=body.food_id,
         carbohydrate=body.nutrients.carbohydrate,
@@ -37,7 +37,7 @@ def create_report(body: ReportCreateBody, userInfo: UserInfoSession) -> Report:
     return confirm_report(ReportConfirmBody(reportId=report.id, confirm=1), userInfo)
 
 
-def confirm_report(body: ReportConfirmBody, userInfo: UserInfoSession) -> Report:
+def confirm_report(body: ReportConfirmBody, userInfo: CurrentUser) -> Report:
     user_report = UserReportModel(
         user_id=userInfo["id"],
         report_id=body.report_id,

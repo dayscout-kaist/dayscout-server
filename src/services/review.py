@@ -3,10 +3,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 from src.models import ReviewModel, engine
-from src.schemas import ReviewCreateBody, UserInfoSession
+from src.schemas import CurrentUser, ReviewCreateBody
 
 
-def create_review(body: ReviewCreateBody, userInfo: UserInfoSession) -> int:
+def create_review(body: ReviewCreateBody, userInfo: CurrentUser) -> int:
     review = ReviewModel(
         food_id=body.food_id,
         carbohydrate=body.nutrients.carbohydrate,

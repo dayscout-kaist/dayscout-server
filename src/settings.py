@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     MYSQL_HOST: str = "127.0.0.1"
     MYSQL_DB_NAME: str = "user_db"
     SESSION_SECRET_KEY: str = "session_secret_key"
+    JWT_SECRET_KEY: str = "jwt_secret_key"
 
     class Config:
         env_file = ".env"
