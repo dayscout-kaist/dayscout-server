@@ -8,7 +8,7 @@ from src.models import UserModel, engine
 from src.schemas import LoginBody, RegisterBody, UserInfoSession
 
 
-def login_user(request: Request, body: LoginBody) -> bool:
+def login_user(request: Request, body: LoginBody) -> UserInfoSession:
     with Session(engine) as session:
         query = select(UserModel).where(UserModel.email == body.email)
         user = session.exec(query).first()
@@ -18,12 +18,12 @@ def login_user(request: Request, body: LoginBody) -> bool:
     if not checkpw(body.password.encode("utf-8"), user.password.encode("utf-8")):
         raise HTTPException(status_code=400, detail="Bad Request")
 
-    request.session["userInfo"]: UserInfoSession = {
-        "id": user.id,
-        "email": user.email,
-        "username": user.username,
-    }
-    return True
+    request.session["userInfo"] = UserInfoSession(
+        id=user.id,
+        email=user.email,
+        username=user.username,
+    )
+    return request.session["userInfo"]
 
 
 def register_user(body: RegisterBody) -> bool:

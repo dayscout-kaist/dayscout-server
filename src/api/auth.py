@@ -15,7 +15,7 @@ async def info(request: Request) -> UserInfoSession:
 
 
 @router.post("/login")
-async def login(request: Request, body: LoginBody) -> bool:
+async def login(request: Request, body: LoginBody) -> UserInfoSession:
     return login_user(request, body)
 
 

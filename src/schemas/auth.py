@@ -2,6 +2,8 @@ from typing import Optional
 
 from src.utils.response import RequestModel
 
+from .unit import GenderEnum
+
 
 class UserInfoSession(RequestModel):
     id: int
@@ -20,3 +22,5 @@ class RegisterBody(RequestModel):
     password: str
     height: Optional[float]
     weight: Optional[float]
+    birth: Optional[str]
+    gender: Optional[GenderEnum]
