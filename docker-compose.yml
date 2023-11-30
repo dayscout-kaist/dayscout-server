@@ -16,8 +16,10 @@ services:
     networks:
       - server
     depends_on:
-      - elasticsearch
-      - mysql
+      elasticsearch:
+        condition: service_started
+      mysql:
+        condition: service_healthy
 
   elasticsearch:
     container_name: dayscout-elasticsearch
@@ -72,6 +74,10 @@ services:
       - "${DB_PORT?}:3306"
     networks:
       - server
+    healthcheck:
+      test: "mysql -uroot -p$$MYSQL_ROOT_PASSWORD $$MYSQL_DATABASE -e 'select 1'"
+      interval: 1s
+      retries: 10
 
 
 networks:
