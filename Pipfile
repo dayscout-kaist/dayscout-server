@@ -22,6 +22,7 @@ requests = "*"
 openpyxl = "*"
 pydantic-sqlalchemy = "*"
 pyjwt = "*"
+tqdm = "*"
 
 [dev-packages]
 black = "*"

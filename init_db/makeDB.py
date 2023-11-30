@@ -1,11 +1,12 @@
 import pandas as pd
 import requests
+from tqdm import tqdm
 
 # 엑셀 파일 경로
 excel_path = "initialDB.xlsx"
 
 # FastAPI 엔드포인트
-api_endpoint = "http://localhost:8000/food/create"
+api_endpoint = "https://dayscout.sparcsandbox.com/food/create"
 
 
 def generate_food_data():
@@ -13,7 +14,7 @@ def generate_food_data():
     df = pd.read_excel(excel_path)
 
     # 엑셀 파일의 각 행을 반복하여 API 호출
-    for index, row in df.iterrows():
+    for index, row in tqdm(df.iterrows(), total=df.shape[0]):
         food_data = {
             "name": row["식품명"],
             "representName": row["대표식품명"],
@@ -33,9 +34,7 @@ def generate_food_data():
         headers = {"Content-Type": "application/json"}
 
         response = requests.post(api_endpoint, json=food_data, headers=headers)
-        if response.status_code == 200:
-            print(f"Data successfully added for {row['식품명']}")
-        else:
+        if response.status_code != 200:
             print(f"Failed to add data for {row['식품명']}: {response.text}")
 
 
