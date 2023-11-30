@@ -6,6 +6,7 @@ from sqlmodel import Field, Relationship, SQLModel
 class UserModel(SQLModel, table=True):
     if TYPE_CHECKING:
         from .report import UserReportModel
+        from .review import ReviewModel
 
     id: int = Field(default=None, primary_key=True)
     username: str = Field(unique=True)
@@ -15,3 +16,4 @@ class UserModel(SQLModel, table=True):
     weight: Optional[float]
 
     user_reports: List["UserReportModel"] = Relationship(back_populates="user")
+    reviews: List["ReviewModel"] = Relationship(back_populates="user")
