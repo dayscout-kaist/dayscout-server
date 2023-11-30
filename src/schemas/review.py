@@ -10,7 +10,7 @@ from .tag import Tag
 class ReviewCreateBody(RequestModel):
     food_id: int
     nutrients: Nutrients
-    content: str
+    content: Optional[str]
     tag_ids: list[int] = []
 
 
