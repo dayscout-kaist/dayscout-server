@@ -1,9 +1,10 @@
 import asyncio
 
 from fastapi import HTTPException
+from sqlalchemy import func
 from sqlmodel import Session, select
 
-from src.models import FoodModel, engine
+from src.models import FoodModel, PostModel, TagModel, engine
 from src.schemas import Food, FoodDetail
 from src.services.product_db import (
     get_product_by_id,
@@ -11,7 +12,7 @@ from src.services.product_db import (
     get_product_list,
 )
 
-from .food import get_distribution_food_detail, get_food_detail
+from .food import get_distribution_food_detail, get_food_detail, get_tag_by_food_id
 
 
 async def create_food_by_product_id(product_id: int) -> int | None:
@@ -39,9 +40,22 @@ async def search_food_by_text(text: str) -> list[Food]:
             select(FoodModel).where(FoodModel.name.ilike(f"%{text}%"))
         ).all()
         print(foods)
+        tag_dict = {}
+
+        for food in foods:
+            tag_list = get_tag_by_food_id(food.id, session)
+            tag_dict[food.id] = tag_list
 
     return [
-        Food(id=food.id, name=food.name, image_src=food.image_src) for food in foods
+        Food(
+            id=food.id,
+            name=food.name,
+            tag=tag_dict[food.id],
+            representName=food.represent_name,
+            className=food.class_name,
+            image_src=food.image_src,
+        )
+        for food in foods
     ]
 
 
