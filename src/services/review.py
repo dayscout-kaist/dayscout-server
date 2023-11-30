@@ -6,7 +6,7 @@ from src.models import ReviewModel, engine
 from src.schemas import CurrentUser, ReviewCreateBody
 
 
-def create_review(body: ReviewCreateBody, userInfo: CurrentUser) -> int:
+def create_review(body: ReviewCreateBody, current_user: CurrentUser) -> int:
     review = ReviewModel(
         food_id=body.food_id,
         carbohydrate=body.nutrients.carbohydrate,
@@ -14,7 +14,7 @@ def create_review(body: ReviewCreateBody, userInfo: CurrentUser) -> int:
         fat=body.nutrients.fat,
         sugar=body.nutrients.sugar,
         energy=body.nutrients.energy,
-        user_id=userInfo["id"],
+        user_id=current_user.id,
     )
     try:
         with Session(engine) as session:

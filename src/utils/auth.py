@@ -2,13 +2,10 @@ from datetime import datetime, timedelta
 
 import jwt
 from fastapi import HTTPException
-from fastapi.security import OAuth2PasswordBearer
 from starlette.requests import Request
 
 from src.schemas import CurrentUser, TokenBody
 from src.settings import settings
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 
 def create_access_token(data: dict):
@@ -37,10 +34,3 @@ def get_authorized_user(body: TokenBody) -> CurrentUser:
         birth=userInfo.get("birth"),
         gender=userInfo.get("gender"),
     )
-
-
-def getAuthorizedUserInfo(request: Request):
-    userInfo = request.session.get("userInfo")
-    if userInfo == None:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    return userInfo

@@ -10,13 +10,15 @@ from src.models import PostModel, PostTagModel, engine
 from src.schemas import CurrentUser, Post, PostCreateBody, Tag
 
 
-def create_post(body: PostCreateBody, userInfo: CurrentUser) -> int:
+def create_post(body: PostCreateBody, current_user: CurrentUser) -> int:
+    print(body)
+    print(current_user)
     try:
         with Session(engine) as session:
             post = PostModel(
                 content=body.content,
                 food_id=body.food_id,
-                user_id=userInfo["id"],
+                user_id=current_user.id,
             )
             session.add(post)
             session.commit()
@@ -76,7 +78,7 @@ def search_post_by_food_id(food_id: int) -> list[Post]:
     return search_post(PostModel.food_id == food_id)
 
 
-def search_post_by_day(day: datetime, userInfo: CurrentUser) -> list[Post]:
+def search_post_by_day(day: datetime, current_user: CurrentUser) -> list[Post]:
     return search_post(
-        PostModel.user_id == userInfo["id"], func.date(PostModel.created_at)
+        PostModel.user_id == current_user.id, func.date(PostModel.created_at)
     )

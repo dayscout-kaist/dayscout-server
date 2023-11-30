@@ -1,20 +1,21 @@
-from fastapi import APIRouter
-from starlette.requests import Request
+from fastapi import APIRouter, Depends
 
-from src.schemas import Report, ReportConfirmBody, ReportCreateBody
+from src.schemas import CurrentUser, Report, ReportConfirmBody, ReportCreateBody
 from src.services import confirm_report, create_report
-from src.utils.auth import getAuthorizedUserInfo
+from src.utils.auth import get_authorized_user
 
 router = APIRouter()
 
 
 @router.post("/create")
-async def create(request: Request, body: ReportCreateBody) -> Report:
-    userInfo = getAuthorizedUserInfo(request)
-    return create_report(body, userInfo)
+async def create(
+    body: ReportCreateBody, current_user: CurrentUser = Depends(get_authorized_user)
+) -> Report:
+    return create_report(body, current_user)
 
 
 @router.post("/confirm")
-async def confirm(request: Request, body: ReportConfirmBody) -> Report:
-    userInfo = getAuthorizedUserInfo(request)
-    return confirm_report(body, userInfo)
+async def confirm(
+    body: ReportConfirmBody, current_user: CurrentUser = Depends(get_authorized_user)
+) -> Report:
+    return confirm_report(body, current_user)
