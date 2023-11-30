@@ -66,8 +66,9 @@ async def get_product_list(keyword: str | int) -> list[Product]:
     document = html.fromstring(response.text)
 
     return [
-        parse_product_info(element)
+        parsed_info
         for element in document.cssselect("div.spl_list > ul > li")
+        if (parsed_info := parse_product_info(element)).large_category == "가공식품"
     ]
 
 
@@ -105,7 +106,7 @@ async def get_product_by_id(id: int) -> FoodModel:
     )
 
     return FoodModel(
-        name=text(document, "h3.detail"),
+        name=text(document, "td.prdNmKor"),
         represent_name=medium_category,
         class_name=small_category,
         total_weight=text(info_table, "td.originVolume"),
