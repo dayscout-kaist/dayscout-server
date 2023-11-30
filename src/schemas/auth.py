@@ -16,6 +16,10 @@ class CurrentUser(ResponseModel):
     gender: Optional[GenderEnum]
 
 
+class TokenBody(RequestModel):
+    token: str
+
+
 class LoginBody(RequestModel):
     email: str
     password: str

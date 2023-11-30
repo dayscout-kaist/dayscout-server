@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 
 import jwt
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette.requests import Request
 
-from src.schemas import CurrentUser
+from src.schemas import CurrentUser, TokenBody
 from src.settings import settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 
 def create_access_token(data: dict):
@@ -19,16 +19,16 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_authorized_user(token: str = Depends(oauth2_scheme)) -> CurrentUser:
+def get_authorized_user(body: TokenBody) -> CurrentUser:
     try:
-        userInfo = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=["HS256"])
+        userInfo = jwt.decode(body.token, settings.JWT_SECRET_KEY, algorithms=["HS256"])
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Unauthorized")
     if userInfo.get("id") == None:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     return CurrentUser(
-        token=token,
+        token=body.token,
         id=userInfo.get("id"),
         email=userInfo.get("email"),
         username=userInfo.get("username"),

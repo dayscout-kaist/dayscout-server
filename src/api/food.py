@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from src.schemas import Food, FoodCreateBody, FoodDetail
 from src.services import (
