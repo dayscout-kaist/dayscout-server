@@ -56,6 +56,9 @@ class FoodDetail(ResponseModel):
 class Food(ResponseModel):
     id: int
     name: str
+    represent_name: str
+    class_name: str
+    tag: list[Tag]
     image_src: Optional[str]
 
 

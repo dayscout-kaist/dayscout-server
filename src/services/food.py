@@ -1,15 +1,15 @@
 from fastapi import HTTPException
-from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from src.models import FoodModel, ReviewModel, engine
+from src.models import FoodModel, PostModel, ReviewModel, engine
 from src.schemas import (
     DistributionFoodContent,
     FoodCreateBody,
     FoodDetail,
     GeneralFoodContent,
     Nutrients,
+    Tag,
 )
 
 
@@ -39,6 +39,7 @@ def get_general_food_detail(food: FoodModel) -> FoodDetail:
         reviews = (
             session.query(ReviewModel).filter(ReviewModel.food_id == food.id).all()
         )
+        tag_list = get_tag_by_food_id(food.id, session)
 
     original_nutrients = Nutrients(
         carbohydrate=food.carbohydrate,
@@ -59,7 +60,7 @@ def get_general_food_detail(food: FoodModel) -> FoodDetail:
     return FoodDetail(
         id=food.id,
         name=food.name,
-        tag=[],
+        tag=tag_list,
         content=GeneralFoodContent(
             total_weight=food.total_weight,
             unit="absolute",
@@ -78,6 +79,7 @@ def get_distribution_food_detail(food: FoodModel) -> FoodDetail:
         reviews = (
             session.query(ReviewModel).filter(ReviewModel.food_id == food.id).all()
         )
+        tag_list = get_tag_by_food_id(food.id, session)
 
     suggested_nutrients = (
         Nutrients(
@@ -101,7 +103,7 @@ def get_distribution_food_detail(food: FoodModel) -> FoodDetail:
     return FoodDetail(
         id=food.id,
         name=food.name,
-        tag=[],
+        tag=tag_list,
         content=DistributionFoodContent(
             total_weight=food.total_weight,
             manufacturer=food.manufacturer,
@@ -128,3 +130,14 @@ def get_food_detail(food_id: int) -> FoodDetail:
         if food.type == "general"
         else get_distribution_food_detail(food)
     )
+
+
+def get_tag_by_food_id(id: int, session: Session) -> list[Tag]:
+    post = session.exec(select(PostModel).where(PostModel.food_id == id)).first()
+    tag_list = []
+    if post is not None:
+        tags = post.post_tags
+        for tag in tags:
+            tag_list.append(tag.tag)
+
+    return tag_list
