@@ -11,6 +11,7 @@ services:
       - ES_INDEX=${ES_INDEX}
       - CLOVA_CLIENT_SECRET=${CLOVA_CLIENT_SECRET?}
       - MYSQL_USER_NAME=root
+      - MYSQL_DB_NAME=${MYSQL_DB_NAME?}
       - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD?}
       - MYSQL_HOST=mysql
     networks:
@@ -69,6 +70,7 @@ services:
         source: ./data/mysql
         target: /var/lib/mysql
     environment:
+      - MYSQL_DATABASE=${MYSQL_DB_NAME?}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD?}
     ports:
       - "${DB_PORT?}:3306"
