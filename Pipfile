@@ -21,6 +21,7 @@ pandas = "*"
 requests = "*"
 openpyxl = "*"
 pydantic-sqlalchemy = "*"
+pyjwt = "*"
 
 [dev-packages]
 black = "*"

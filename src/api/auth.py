@@ -1,30 +1,27 @@
-from fastapi import APIRouter
-from starlette.requests import Request
+from fastapi import APIRouter, Depends
 
-from src.schemas import LoginBody, RegisterBody, UserInfoSession
+from src.schemas import CurrentUser, LoginBody, RegisterBody
 from src.services import login_user, register_user
-from src.utils.auth import getAuthorizedUserInfo
+from src.utils.auth import get_authorized_user
 
 router = APIRouter()
 
 
-@router.get("/")
-async def info(request: Request) -> UserInfoSession:
-    userInfo = getAuthorizedUserInfo(request)
-    return userInfo
+@router.post("/")
+async def info(current_user: CurrentUser = Depends(get_authorized_user)) -> CurrentUser:
+    return current_user
 
 
 @router.post("/login")
-async def login(request: Request, body: LoginBody) -> bool:
-    return login_user(request, body)
+async def login(body: LoginBody) -> CurrentUser:
+    return login_user(body)
 
 
-@router.get("/logout")
-async def logout(request: Request) -> bool:
-    request.session.clear()
-    return True
+# @router.post("/token")
+# async def token(body: LoginBody):
+#     return login_token(body)
 
 
 @router.post("/register")
-async def register(body: RegisterBody) -> bool:
+async def register(body: RegisterBody) -> CurrentUser:
     return register_user(body)

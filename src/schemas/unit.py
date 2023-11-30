@@ -44,6 +44,12 @@ class PrimaryUnit(str, Enum):
     ml = "ml"
 
 
+class GenderEnum(str, Enum):
+    male = "male"
+    female = "female"
+    other = "other"
+
+
 class UnitEnum(str, Enum):
     absolulteUnit = "absolute"
     totalUnit = "total"

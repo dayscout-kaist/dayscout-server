@@ -39,7 +39,7 @@ def get_general_food_detail(food: FoodModel) -> FoodDetail:
         reports = (
             session.query(ReportModel).filter(ReportModel.food_id == food.id).all()
         )
-        tag_list = get_tag_by_food_id(food.id, session)
+        tag_list = get_tags_by_food_id(food.id, session)
 
     original_nutrients = Nutrients(
         carbohydrate=food.carbohydrate,
@@ -79,7 +79,7 @@ def get_distribution_food_detail(food: FoodModel) -> FoodDetail:
         reports = (
             session.query(ReportModel).filter(ReportModel.food_id == food.id).all()
         )
-        tag_list = get_tag_by_food_id(food.id, session)
+        tag_list = get_tags_by_food_id(food.id, session)
 
     suggested_nutrients = (
         Nutrients(
@@ -132,7 +132,7 @@ def get_food_detail(food_id: int) -> FoodDetail:
     )
 
 
-def get_tag_by_food_id(id: int, session: Session) -> list[Tag]:
+def get_tags_by_food_id(id: int, session: Session) -> list[Tag]:
     post = session.exec(select(PostModel).where(PostModel.food_id == id)).first()
     tag_list = []
     if post is not None:

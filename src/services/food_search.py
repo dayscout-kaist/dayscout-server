@@ -12,7 +12,7 @@ from src.services.product_db import (
     get_product_list,
 )
 
-from .food import get_distribution_food_detail, get_food_detail, get_tag_by_food_id
+from .food import get_distribution_food_detail, get_tags_by_food_id
 
 
 async def create_food_by_product_id(product_id: int) -> int | None:
@@ -43,7 +43,7 @@ async def search_food_by_text(text: str) -> list[Food]:
         tag_dict = {}
 
         for food in foods:
-            tag_list = get_tag_by_food_id(food.id, session)
+            tag_list = get_tags_by_food_id(food.id, session)
             tag_dict[food.id] = tag_list
 
     return [
