@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Query
-from starlette.requests import Request
+from fastapi import APIRouter, Depends
 
-from src.schemas import CurrentUser, Post, PostCreateBody
+from src.schemas import CurrentUser, Post, PostCreateBody, PostSearchByDayBody
 from src.services import create_post, search_post_by_day, search_post_by_food_id
 from src.utils.auth import get_authorized_user
 
@@ -22,11 +21,13 @@ async def search_by_food_id(id: int) -> list[Post]:
     return search_post_by_food_id(id)
 
 
-@router.get("/search/byDay")
+@router.post("/search/byDay")
 async def search_by_day(
-    day: datetime = Query(None),
+    body: PostSearchByDayBody,
     current_user: CurrentUser = Depends(get_authorized_user),
 ) -> list[Post]:
-    if day == None:
-        day = datetime.today()
-    return search_post_by_day(day, current_user)
+    datestr = (
+        datetime.today().strftime("%Y%m%d") if body.datestr == None else body.datestr
+    )
+    print(datestr)
+    return search_post_by_day(datestr, current_user)

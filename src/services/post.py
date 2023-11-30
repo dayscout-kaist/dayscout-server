@@ -78,7 +78,9 @@ def search_post_by_food_id(food_id: int) -> list[Post]:
     return search_post(PostModel.food_id == food_id)
 
 
-def search_post_by_day(day: datetime, current_user: CurrentUser) -> list[Post]:
+def search_post_by_day(datestr: str, current_user: CurrentUser) -> list[Post]:
+    date = datetime.strptime(datestr, "%Y%m%d")
     return search_post(
-        PostModel.user_id == current_user.id, func.date(PostModel.created_at)
+        PostModel.user_id == current_user.id,
+        func.date(PostModel.created_at) == date.date(),
     )
