@@ -136,7 +136,7 @@ def get_tags_by_food_id(id: int, session: Session) -> list[Tag]:
     post = session.exec(select(ReviewModel).where(ReviewModel.food_id == id)).first()
     tag_list = []
     if post is not None:
-        tags = post.post_tags
+        tags = post.review_tags
         for tag in tags:
             tag_list.append(tag.tag)
 
