@@ -20,7 +20,7 @@ class ReviewSearchByDayBody(RequestModel):
 
 class Review(ResponseModel):
     id: int
-    content: str
+    content: Optional[str]
     food_id: Optional[int]
     user_id: int
     nutrients: Nutrients
