@@ -70,6 +70,12 @@
 
 ## **설치 및 실행 방법**
 
+### Clone Repositories
+
+```bash
+git clone https://github.com/dayscout-kaist/dayscout-server
+```
+
 ### Quick Start
 
 Use pipenv to install packages. (e.g., `pipenv install <package>`)
