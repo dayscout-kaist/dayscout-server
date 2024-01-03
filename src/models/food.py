@@ -8,8 +8,8 @@ from src.schemas.unit import FoodType, PrimaryUnit, UnitEnum
 
 class FoodModel(SQLModel, table=True):
     if TYPE_CHECKING:
+        from .history import HistoryModel
         from .report import ReportModel
-        from .review import ReviewModel
 
     id: int = Field(primary_key=True, default=None, index=True)
     name: str
@@ -25,10 +25,10 @@ class FoodModel(SQLModel, table=True):
     sugar: Optional[float]
     energy: Optional[float]
     type: FoodType
-    image_src: Optional[str]
+    image_src: Optional[str] = Field(max_length=500)
     barcode_number: Optional[str] = Field(index=True, unique=True)
     product_db_id: Optional[int] = Field(index=True)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
     reports: List["ReportModel"] = Relationship(back_populates="food")
-    reviews: List["ReviewModel"] = Relationship(back_populates="food")
+    histories: List["HistoryModel"] = Relationship(back_populates="food")

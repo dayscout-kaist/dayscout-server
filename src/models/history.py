@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, List, Optional
 from sqlmodel import Field, Relationship, SQLModel
 
 
-class ReviewModel(SQLModel, table=True):
+class HistoryModel(SQLModel, table=True):
     if TYPE_CHECKING:
         from .food import FoodModel
-        from .tag import ReviewTagModel
+        from .tag import HistoryTagModel
         from .user import UserModel
 
     id: int = Field(primary_key=True, default=None, index=True)
@@ -18,14 +18,16 @@ class ReviewModel(SQLModel, table=True):
     energy: Optional[float]
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-    content: Optional[str]
-
     food_id: Optional[int] = Field(
         default=None, foreign_key="foodmodel.id", nullable=True
     )
-    food: "FoodModel" = Relationship(back_populates="reviews")
+    food: Optional["FoodModel"] = Relationship(back_populates="histories")
 
     user_id: int = Field(foreign_key="usermodel.id")
-    user: "UserModel" = Relationship(back_populates="reviews")
+    user: "UserModel" = Relationship(back_populates="histories")
 
-    review_tags: List["ReviewTagModel"] = Relationship(back_populates="review")
+    post_content: Optional[str]
+    post_created_at: Optional[datetime] = Field(
+        default_factory=datetime.utcnow, nullable=False
+    )
+    post_tags: List["HistoryTagModel"] = Relationship(back_populates="history")

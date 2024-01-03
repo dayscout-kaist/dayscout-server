@@ -5,13 +5,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
-from src.models import ReviewModel, ReviewTagModel, engine
+from src.models import HistoryModel, HistoryTagModel, engine
 from src.schemas import CurrentUser, Nutrients, Review, ReviewCreateBody, Tag
 from src.utils.time import kst
 
 
 def create_review(body: ReviewCreateBody, current_user: CurrentUser) -> int:
-    review = ReviewModel(
+    review = HistoryModel(
         food_id=body.food_id,
         carbohydrate=body.nutrients.carbohydrate,
         protein=body.nutrients.protein,
@@ -33,7 +33,7 @@ def create_review(body: ReviewCreateBody, current_user: CurrentUser) -> int:
     try:
         with Session(engine) as session:
             for tag_id in body.tag_ids:
-                post_tag = ReviewTagModel(review_id=review.id, tag_id=tag_id)
+                post_tag = HistoryTagModel(review_id=review.id, tag_id=tag_id)
                 session.add(post_tag)
             session.commit()
 
@@ -47,10 +47,10 @@ def search_review(*queries) -> list[Review]:
     with Session(engine) as session:
         posts = (
             session.exec(
-                select(ReviewModel)
+                select(HistoryModel)
                 .where(*queries)
                 .options(
-                    joinedload(ReviewModel.review_tags).joinedload(ReviewTagModel.tag)
+                    joinedload(HistoryModel.review_tags).joinedload(HistoryTagModel.tag)
                 )
             )
             .unique()
@@ -87,13 +87,14 @@ def search_review(*queries) -> list[Review]:
 
 
 def search_review_by_food_id(food_id: int) -> list[Review]:
-    return search_review(ReviewModel.food_id == food_id)
+    return search_review(HistoryModel.food_id == food_id)
 
 
 def search_review_by_day(datestr: str, current_user: CurrentUser) -> list[Review]:
+    print(datestr)
     date = datetime.strptime(datestr, "%Y%m%d").astimezone(kst)
     return search_review(
-        ReviewModel.user_id == current_user.id,
-        ReviewModel.created_at >= date - timedelta(hours=9),
-        ReviewModel.created_at < date + timedelta(days=1) - timedelta(hours=9),
+        HistoryModel.user_id == current_user.id,
+        HistoryModel.created_at >= date - timedelta(hours=9),
+        HistoryModel.created_at < date + timedelta(days=1) - timedelta(hours=9),
     )

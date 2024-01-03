@@ -7,11 +7,11 @@ from src.schemas.unit import GenderEnum
 
 class UserModel(SQLModel, table=True):
     if TYPE_CHECKING:
+        from .history import HistoryModel
         from .report import UserReportModel
-        from .review import ReviewModel
 
-    id: int = Field(default=None, primary_key=True)
-    username: str
+    id: int = Field(default=None, index=True, primary_key=True)
+    nickname: str
     email: str = Field(unique=True)
     password: str
     height: Optional[float]
@@ -20,4 +20,15 @@ class UserModel(SQLModel, table=True):
     gender: Optional[GenderEnum]
 
     user_reports: List["UserReportModel"] = Relationship(back_populates="user")
-    reviews: List["ReviewModel"] = Relationship(back_populates="user")
+    histories: List["HistoryModel"] = Relationship(back_populates="user")
+    devices: List["DeviceModel"] = Relationship(back_populates="user")
+
+
+class DeviceModel(SQLModel, table=True):
+    token: str = Field(primary_key=True, index=True)
+    notification_after_one_hour: bool = Field(default=False)
+    notification_after_two_hours: bool = Field(default=False)
+    notification_after_four_hours: bool = Field(default=False)
+
+    user_id: int = Field(foreign_key="usermodel.id")
+    user: "UserModel" = Relationship(back_populates="devices")

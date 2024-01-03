@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from src.models import FoodModel, ReportModel, ReviewModel, engine
+from src.models import FoodModel, HistoryModel, ReportModel, engine
 from src.schemas import (
     DistributionFoodContent,
     FoodCreateBody,
@@ -133,7 +133,7 @@ def get_food_detail(food_id: int) -> FoodDetail:
 
 
 def get_tags_by_food_id(id: int, session: Session) -> list[Tag]:
-    post = session.exec(select(ReviewModel).where(ReviewModel.food_id == id)).first()
+    post = session.exec(select(HistoryModel).where(HistoryModel.food_id == id)).first()
     tag_list = []
     if post is not None:
         tags = post.review_tags
