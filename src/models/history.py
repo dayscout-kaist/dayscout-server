@@ -7,8 +7,7 @@ from sqlmodel import Field, Relationship, SQLModel
 class HistoryModel(SQLModel, table=True):
     if TYPE_CHECKING:
         from .food import FoodModel
-        from .post import PostModel
-        from .tag import PostTagModel
+        from .tag import HistoryTagModel
         from .user import UserModel
 
     id: int = Field(primary_key=True, default=None, index=True)
@@ -27,5 +26,8 @@ class HistoryModel(SQLModel, table=True):
     user_id: int = Field(foreign_key="usermodel.id")
     user: "UserModel" = Relationship(back_populates="histories")
 
-    post_id: Optional[int] = Field(foreign_key="postmodel.id")
-    post: Optional["PostModel"] = Relationship(back_populates="history")
+    post_content: Optional[str]
+    post_created_at: Optional[datetime] = Field(
+        default_factory=datetime.utcnow, nullable=False
+    )
+    post_tags: List["HistoryTagModel"] = Relationship(back_populates="history")

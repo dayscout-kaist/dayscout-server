@@ -25,7 +25,7 @@ class FoodModel(SQLModel, table=True):
     sugar: Optional[float]
     energy: Optional[float]
     type: FoodType
-    image_src: Optional[str]
+    image_src: Optional[str] = Field(max_length=500)
     barcode_number: Optional[str] = Field(index=True, unique=True)
     product_db_id: Optional[int] = Field(index=True)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)

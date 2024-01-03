@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
-from src.models import HistoryModel, PostTagModel, engine
+from src.models import HistoryModel, HistoryTagModel, engine
 from src.schemas import CurrentUser, Nutrients, Review, ReviewCreateBody, Tag
 from src.utils.time import kst
 
@@ -33,7 +33,7 @@ def create_review(body: ReviewCreateBody, current_user: CurrentUser) -> int:
     try:
         with Session(engine) as session:
             for tag_id in body.tag_ids:
-                post_tag = PostTagModel(review_id=review.id, tag_id=tag_id)
+                post_tag = HistoryTagModel(review_id=review.id, tag_id=tag_id)
                 session.add(post_tag)
             session.commit()
 
@@ -50,7 +50,7 @@ def search_review(*queries) -> list[Review]:
                 select(HistoryModel)
                 .where(*queries)
                 .options(
-                    joinedload(HistoryModel.review_tags).joinedload(PostTagModel.tag)
+                    joinedload(HistoryModel.review_tags).joinedload(HistoryTagModel.tag)
                 )
             )
             .unique()
