@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
@@ -16,8 +17,9 @@ class UserModel(SQLModel, table=True):
     password: str
     height: Optional[float]
     weight: Optional[float]
-    birth: Optional[str]
+    birth: Optional[datetime]
     gender: Optional[GenderEnum]
+    signup_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
     user_reports: List["UserReportModel"] = Relationship(back_populates="user")
     histories: List["HistoryModel"] = Relationship(back_populates="user")

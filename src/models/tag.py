@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 
@@ -6,6 +6,7 @@ from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 class TagModel(SQLModel, table=True):
     id: str = Field(primary_key=True, index=True, unique=True)
     name: str = Field(unique=True)
+    color: Optional[str]
 
     post_tags: List["HistoryTagModel"] = Relationship(back_populates="tag")
 
