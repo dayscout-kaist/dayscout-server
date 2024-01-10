@@ -3,8 +3,8 @@ from sqlmodel import SQLModel, create_engine
 from src.settings import settings
 
 from .food import *
+from .history import *
 from .report import *
-from .review import *
 from .tag import *
 from .user import *
 
